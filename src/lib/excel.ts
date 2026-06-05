@@ -99,6 +99,10 @@ export function mapRowsToDocuments(
       doc.numero = String(row[mapping.numero])
     }
 
+    if (mapping.client_numero && row[mapping.client_numero]) {
+      doc.client_numero = String(row[mapping.client_numero])
+    }
+
     if (mapping.notes && row[mapping.notes]) {
       doc.notes = String(row[mapping.notes])
     }

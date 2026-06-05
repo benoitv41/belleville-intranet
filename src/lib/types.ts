@@ -8,6 +8,7 @@ export interface Document {
   date: string
   commercial_nom: string
   client: string
+  client_numero?: string
   montant_ht: number
   montant_ttc?: number
   statut: DocStatut
@@ -26,6 +27,7 @@ export interface Commercial {
 export interface ColumnMapping {
   commercial_nom: string
   client: string
+  client_numero?: string
   date: string
   montant_ht: string
   montant_ttc?: string

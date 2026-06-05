@@ -9,6 +9,7 @@ import { formatCurrency } from '@/lib/stats'
 const REQUIRED_FIELDS: { key: keyof ColumnMapping; label: string; required: boolean }[] = [
   { key: 'commercial_nom', label: 'Commercial', required: true },
   { key: 'client', label: 'Client', required: true },
+  { key: 'client_numero', label: 'N° client', required: false },
   { key: 'date', label: 'Date', required: true },
   { key: 'montant_ht', label: 'Montant HT', required: true },
   { key: 'type', label: 'Type de pièce', required: false },

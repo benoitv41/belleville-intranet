@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { createClient as createSupabaseClient } from '@supabase/supabase-js'
 
 const isSupabaseConfigured = !!(
   process.env.NEXT_PUBLIC_SUPABASE_URL &&
@@ -18,8 +19,9 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ count: documents.length, demo: true })
     }
 
-    const { createClient } = await import('@/lib/supabase/server')
-    const supabase = await createClient()
+    // Use service role key to bypass RLS for server-side imports
+    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    const supabase = createSupabaseClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, supabaseKey)
 
     const upsertedCommercials = [...new Set(documents.map((d: { commercial_nom: string }) => d.commercial_nom))]
     for (const nom of upsertedCommercials) {
