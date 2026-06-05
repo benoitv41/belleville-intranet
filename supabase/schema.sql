@@ -17,7 +17,7 @@ create table if not exists documents (
   commercial_nom text not null,
   client text not null,
   client_numero text,
-  piece_origine text,
+  piece_transformee text,
   montant_ht numeric not null default 0,
   montant_ttc numeric,
   commission numeric,

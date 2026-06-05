@@ -9,7 +9,7 @@ export interface Document {
   commercial_nom: string
   client: string
   client_numero?: string
-  piece_origine?: string
+  piece_transformee?: string
   montant_ht: number
   montant_ttc?: number
   commission?: number
@@ -30,7 +30,7 @@ export interface ColumnMapping {
   commercial_nom: string
   client: string
   client_numero?: string
-  piece_origine?: string
+  piece_transformee?: string
   commission?: string
   date: string
   montant_ht: string

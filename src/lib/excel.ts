@@ -104,8 +104,8 @@ export function mapRowsToDocuments(
       doc.client_numero = String(row[mapping.client_numero])
     }
 
-    if (mapping.piece_origine && row[mapping.piece_origine]) {
-      doc.piece_origine = String(row[mapping.piece_origine])
+    if (mapping.piece_transformee && row[mapping.piece_transformee]) {
+      doc.piece_transformee = String(row[mapping.piece_transformee])
     }
 
     if (mapping.commission && row[mapping.commission]) {
