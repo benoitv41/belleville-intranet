@@ -30,14 +30,32 @@ export async function POST(req: NextRequest) {
 
     const BATCH = 100
     let inserted = 0
-    for (let i = 0; i < documents.length; i += BATCH) {
-      const batch = documents.slice(i, i + BATCH)
+    let skipped = 0
+
+    const withNumero = documents.filter((d: { numero?: string }) => d.numero)
+    const withoutNumero = documents.filter((d: { numero?: string }) => !d.numero)
+
+    // Upsert docs with a numero — skips duplicates
+    for (let i = 0; i < withNumero.length; i += BATCH) {
+      const batch = withNumero.slice(i, i + BATCH)
+      const { data, error } = await supabase
+        .from('documents')
+        .upsert(batch, { onConflict: 'numero', ignoreDuplicates: true })
+        .select('id')
+      if (error) throw new Error(error.message)
+      inserted += data?.length ?? 0
+      skipped += batch.length - (data?.length ?? 0)
+    }
+
+    // Insert docs without numero (no dedup possible)
+    for (let i = 0; i < withoutNumero.length; i += BATCH) {
+      const batch = withoutNumero.slice(i, i + BATCH)
       const { error } = await supabase.from('documents').insert(batch)
       if (error) throw new Error(error.message)
       inserted += batch.length
     }
 
-    return NextResponse.json({ count: inserted })
+    return NextResponse.json({ count: inserted, skipped })
   } catch (e) {
     return NextResponse.json({ error: e instanceof Error ? e.message : 'Erreur interne' }, { status: 500 })
   }

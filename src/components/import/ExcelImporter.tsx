@@ -34,6 +34,7 @@ export function ExcelImporter() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [importedCount, setImportedCount] = useState(0)
+  const [skippedCount, setSkippedCount] = useState(0)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const handleFile = async (file: File) => {
@@ -77,6 +78,7 @@ export function ExcelImporter() {
       const json = await res.json()
       if (!res.ok) throw new Error(json.error || 'Erreur d\'import')
       setImportedCount(json.count)
+      setSkippedCount(json.skipped ?? 0)
       setStep('done')
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Erreur lors de l\'import')
@@ -91,6 +93,7 @@ export function ExcelImporter() {
     setStep('upload')
     setError(null)
     setImportedCount(0)
+    setSkippedCount(0)
   }
 
   const canProceed = REQUIRED_FIELDS.filter(f => f.required).every(f => mapping[f.key])
@@ -105,7 +108,12 @@ export function ExcelImporter() {
           <CheckCircle className="w-8 h-8 text-green-600" />
         </div>
         <h2 className="text-xl font-semibold text-gray-900 mb-2">{importedCount} pièces importées</h2>
-        <p className="text-gray-500 mb-6">Les données sont maintenant disponibles dans votre dashboard.</p>
+        <p className="text-gray-500 mb-6">
+          Les données sont maintenant disponibles dans votre dashboard.
+          {skippedCount > 0 && (
+            <span className="block text-sm text-amber-600 mt-1">{skippedCount} doublon{skippedCount > 1 ? 's' : ''} ignoré{skippedCount > 1 ? 's' : ''}.</span>
+          )}
+        </p>
         <div className="flex gap-3 justify-center">
           <a href="/" className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors">
             Voir le dashboard
