@@ -6,7 +6,7 @@ import {
   ResponsiveContainer,
 } from 'recharts'
 import { CommercialStats } from '@/lib/types'
-import { formatCurrency } from '@/lib/stats'
+import { formatCurrency, ComparaisonData } from '@/lib/stats'
 
 interface CaMensuelProps { data: { month: string; ca: number }[] }
 export function CaMensuelChart({ data }: CaMensuelProps) {
@@ -80,6 +80,26 @@ export function PipelineChart({ data }: PipelineProps) {
           <Bar dataKey="commandes" stackId="a" fill="#10B981" name="Commandes" />
           <Bar dataKey="factures" stackId="a" fill="#3B82F6" name="Factures" radius={[4, 4, 0, 0]} />
         </BarChart>
+      </ResponsiveContainer>
+    </div>
+  )
+}
+
+export function ComparaisonAnnuelleChart({ data }: { data: ComparaisonData }) {
+  const { months, thisYear, lastYear } = data
+  return (
+    <div className="bg-white rounded-xl border border-gray-200 p-5 shadow-sm">
+      <h3 className="font-semibold text-gray-800 mb-4">Comparaison {thisYear} vs {lastYear}</h3>
+      <ResponsiveContainer width="100%" height={220}>
+        <LineChart data={months} margin={{ top: 4, right: 8, bottom: 0, left: 0 }}>
+          <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+          <XAxis dataKey="month" tick={{ fontSize: 12 }} />
+          <YAxis tickFormatter={v => `${(v / 1000).toFixed(0)}k`} tick={{ fontSize: 12 }} />
+          <Tooltip formatter={(v) => formatCurrency(Number(v))} />
+          <Legend iconSize={10} />
+          <Line type="monotone" dataKey="annee_courante" stroke="#3B82F6" strokeWidth={2.5} dot={{ r: 3 }} name={String(thisYear)} />
+          <Line type="monotone" dataKey="annee_precedente" stroke="#94A3B8" strokeWidth={2} strokeDasharray="4 4" dot={{ r: 3 }} name={String(lastYear)} />
+        </LineChart>
       </ResponsiveContainer>
     </div>
   )

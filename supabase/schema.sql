@@ -20,6 +20,7 @@ create table if not exists documents (
   piece_origine text,
   montant_ht numeric not null default 0,
   montant_ttc numeric,
+  commission numeric,
   statut text default 'en_cours' check (statut in ('en_cours', 'validé', 'annulé', 'payé', 'envoyé')),
   notes text,
   created_at timestamp with time zone default now()

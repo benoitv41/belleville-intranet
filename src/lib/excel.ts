@@ -108,6 +108,10 @@ export function mapRowsToDocuments(
       doc.piece_origine = String(row[mapping.piece_origine])
     }
 
+    if (mapping.commission && row[mapping.commission]) {
+      doc.commission = parseAmount(row[mapping.commission])
+    }
+
     if (mapping.notes && row[mapping.notes]) {
       doc.notes = String(row[mapping.notes])
     }

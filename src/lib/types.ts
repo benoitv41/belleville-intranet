@@ -12,6 +12,7 @@ export interface Document {
   piece_origine?: string
   montant_ht: number
   montant_ttc?: number
+  commission?: number
   statut: DocStatut
   notes?: string
   created_at?: string
@@ -30,6 +31,7 @@ export interface ColumnMapping {
   client: string
   client_numero?: string
   piece_origine?: string
+  commission?: string
   date: string
   montant_ht: string
   montant_ttc?: string

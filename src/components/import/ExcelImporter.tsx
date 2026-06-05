@@ -15,6 +15,7 @@ const REQUIRED_FIELDS: { key: keyof ColumnMapping; label: string; required: bool
   { key: 'type', label: 'Type de pièce', required: false },
   { key: 'numero', label: 'Numéro', required: false },
   { key: 'piece_origine', label: 'Pièce d\'origine', required: false },
+  { key: 'commission', label: 'Commission', required: false },
   { key: 'montant_ttc', label: 'Montant TTC', required: false },
   { key: 'statut', label: 'Statut', required: false },
   { key: 'notes', label: 'Notes', required: false },

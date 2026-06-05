@@ -1,6 +1,70 @@
 import { Document, KpiData, CommercialStats } from './types'
-import { format, parseISO, subMonths, startOfMonth, endOfMonth, isWithinInterval } from 'date-fns'
+import { format, parseISO, subMonths, startOfMonth, endOfMonth, startOfQuarter, endOfQuarter, isWithinInterval } from 'date-fns'
 import { fr } from 'date-fns/locale'
+
+export type ComparaisonData = {
+  months: { month: string; annee_courante: number; annee_precedente: number }[]
+  thisYear: number
+  lastYear: number
+}
+
+export function filterByPeriod(docs: Document[], periode: string): Document[] {
+  const now = new Date()
+  switch (periode) {
+    case 'mois':
+      return docs.filter(d => isWithinInterval(parseISO(d.date), { start: startOfMonth(now), end: endOfMonth(now) }))
+    case 'm1': {
+      const m = subMonths(now, 1)
+      return docs.filter(d => isWithinInterval(parseISO(d.date), { start: startOfMonth(m), end: endOfMonth(m) }))
+    }
+    case 'm2': {
+      const m = subMonths(now, 2)
+      return docs.filter(d => isWithinInterval(parseISO(d.date), { start: startOfMonth(m), end: endOfMonth(m) }))
+    }
+    case 'm3': {
+      const m = subMonths(now, 3)
+      return docs.filter(d => isWithinInterval(parseISO(d.date), { start: startOfMonth(m), end: endOfMonth(m) }))
+    }
+    case 'trimestre':
+      return docs.filter(d => isWithinInterval(parseISO(d.date), { start: startOfQuarter(now), end: endOfQuarter(now) }))
+    case 'annee':
+      return docs.filter(d => d.date.startsWith(now.getFullYear().toString()))
+    case 'a1':
+      return docs.filter(d => d.date.startsWith((now.getFullYear() - 1).toString()))
+    case 'comparaison': {
+      const y = now.getFullYear()
+      return docs.filter(d => { const yr = parseInt(d.date.slice(0, 4)); return yr === y || yr === y - 1 })
+    }
+    default:
+      return docs
+  }
+}
+
+export function caComparaisonAnnuelle(docs: Document[]): ComparaisonData {
+  const now = new Date()
+  const thisYear = now.getFullYear()
+  const lastYear = thisYear - 1
+
+  const months = Array.from({ length: 12 }, (_, i) => ({
+    month: format(new Date(2000, i, 1), 'MMM', { locale: fr }),
+    annee_courante: 0,
+    annee_precedente: 0,
+  }))
+
+  docs.filter(d => d.type === 'facture' && d.statut !== 'annulé').forEach(doc => {
+    const date = parseISO(doc.date)
+    const year = date.getFullYear()
+    const idx = date.getMonth()
+    if (year === thisYear) months[idx].annee_courante += doc.montant_ht
+    if (year === lastYear) months[idx].annee_precedente += doc.montant_ht
+  })
+
+  return {
+    months: months.map(m => ({ ...m, annee_courante: Math.round(m.annee_courante), annee_precedente: Math.round(m.annee_precedente) })),
+    thisYear,
+    lastYear,
+  }
+}
 
 export function computeKpis(docs: Document[]): KpiData {
   const now = new Date()

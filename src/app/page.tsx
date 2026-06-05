@@ -1,33 +1,49 @@
+import { Suspense } from 'react'
 import { getDocuments, getCommerciaux, isSupabaseConfigured } from '@/lib/data'
-import { computeKpis, caParCommercial, caMensuel, repartitionTypes, pipelineParCommercial } from '@/lib/stats'
+import { computeKpis, caParCommercial, caMensuel, repartitionTypes, pipelineParCommercial, filterByPeriod, caComparaisonAnnuelle } from '@/lib/stats'
 import { KpiCards } from '@/components/dashboard/KpiCards'
+import { DashboardFilters } from '@/components/dashboard/DashboardFilters'
 import {
   CaMensuelChart,
   CaCommercialChart,
   RepartitionTypesChart,
   PipelineChart,
   ConversionChart,
+  ComparaisonAnnuelleChart,
 } from '@/components/dashboard/Charts'
 import { AlertCircle } from 'lucide-react'
 import Link from 'next/link'
 
 export const dynamic = 'force-dynamic'
 
-export default async function DashboardPage() {
+export default async function DashboardPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ commercial?: string; periode?: string }>
+}) {
+  const params = await searchParams
   const [documents, commerciaux] = await Promise.all([getDocuments(), getCommerciaux()])
 
-  const kpis = computeKpis(documents)
-  const statsParCommercial = caParCommercial(documents)
-  const mensuel = caMensuel(documents)
-  const repartition = repartitionTypes(documents)
-  const pipeline = pipelineParCommercial(documents)
+  const filteredByCommercial = params.commercial
+    ? documents.filter(d => d.commercial_nom === params.commercial)
+    : documents
+
+  const periode = params.periode || 'tout'
+  const filteredDocs = filterByPeriod(filteredByCommercial, periode)
+
+  const kpis = computeKpis(filteredDocs)
+  const statsParCommercial = caParCommercial(filteredDocs)
+  const mensuel = caMensuel(filteredDocs)
+  const repartition = repartitionTypes(filteredDocs)
+  const pipeline = pipelineParCommercial(filteredDocs)
+  const comparaison = periode === 'comparaison' ? caComparaisonAnnuelle(filteredDocs) : null
 
   return (
     <div className="p-6 space-y-6">
       <div className="flex items-start justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-          <p className="text-gray-500 text-sm mt-0.5">{documents.length} pièces · {commerciaux.length} commerciaux</p>
+          <p className="text-gray-500 text-sm mt-0.5">{filteredDocs.length} pièces · {commerciaux.length} commerciaux</p>
         </div>
         {!isSupabaseConfigured && (
           <Link href="/import" className="flex items-center gap-2 text-xs bg-amber-50 border border-amber-200 text-amber-700 rounded-lg px-3 py-2 hover:bg-amber-100 transition-colors">
@@ -37,10 +53,18 @@ export default async function DashboardPage() {
         )}
       </div>
 
+      <Suspense fallback={null}>
+        <DashboardFilters commerciaux={commerciaux.map(c => c.nom)} />
+      </Suspense>
+
       <KpiCards kpis={kpis} />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <CaMensuelChart data={mensuel} />
+        {comparaison ? (
+          <ComparaisonAnnuelleChart data={comparaison} />
+        ) : (
+          <CaMensuelChart data={mensuel} />
+        )}
         <CaCommercialChart data={statsParCommercial} />
       </div>
 
@@ -71,7 +95,7 @@ export default async function DashboardPage() {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100">
-            {documents.slice(0, 8).map(doc => (
+            {filteredDocs.slice(0, 8).map(doc => (
               <tr key={doc.id} className="hover:bg-gray-50 transition-colors">
                 <td className="px-5 py-3 text-gray-500 font-mono text-xs">{doc.numero || '—'}</td>
                 <td className="px-5 py-3">
@@ -101,9 +125,10 @@ function TypeBadge({ type }: { type: string }) {
     devis: 'bg-amber-100 text-amber-700',
     commande: 'bg-green-100 text-green-700',
     avoir: 'bg-purple-100 text-purple-700',
+    bl: 'bg-teal-100 text-teal-700',
   }
   const labels: Record<string, string> = {
-    facture: 'Facture', devis: 'Devis', commande: 'Commande', avoir: 'Avoir',
+    facture: 'Facture', devis: 'Devis', commande: 'Commande', avoir: 'Avoir', bl: 'BL',
   }
   return (
     <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${styles[type] || 'bg-gray-100 text-gray-600'}`}>
