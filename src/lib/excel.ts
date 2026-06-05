@@ -18,6 +18,7 @@ export function parseExcelFile(file: File): Promise<ParsedExcelData> {
         const rows = XLSX.utils.sheet_to_json<Record<string, string | number>>(sheet, {
           raw: false,
           dateNF: 'yyyy-mm-dd',
+          defval: '',
         })
 
         if (!rows.length) throw new Error('Fichier vide')
