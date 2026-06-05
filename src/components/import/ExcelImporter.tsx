@@ -14,13 +14,14 @@ const REQUIRED_FIELDS: { key: keyof ColumnMapping; label: string; required: bool
   { key: 'montant_ht', label: 'Montant HT', required: true },
   { key: 'type', label: 'Type de pièce', required: false },
   { key: 'numero', label: 'Numéro', required: false },
+  { key: 'piece_origine', label: 'Pièce d\'origine', required: false },
   { key: 'montant_ttc', label: 'Montant TTC', required: false },
   { key: 'statut', label: 'Statut', required: false },
   { key: 'notes', label: 'Notes', required: false },
 ]
 
 const TYPE_LABELS: Record<DocType, string> = {
-  facture: 'Facture', devis: 'Devis', commande: 'Commande', avoir: 'Avoir',
+  facture: 'Facture', devis: 'Devis', commande: 'Commande', avoir: 'Avoir', bl: 'Bon de livraison',
 }
 
 export function ExcelImporter() {

@@ -11,12 +11,13 @@ create table if not exists commerciaux (
 
 create table if not exists documents (
   id uuid default gen_random_uuid() primary key,
-  type text not null check (type in ('facture', 'devis', 'commande', 'avoir')),
+  type text not null check (type in ('facture', 'devis', 'commande', 'avoir', 'bl')),
   numero text,
   date date not null,
   commercial_nom text not null,
   client text not null,
   client_numero text,
+  piece_origine text,
   montant_ht numeric not null default 0,
   montant_ttc numeric,
   statut text default 'en_cours' check (statut in ('en_cours', 'validé', 'annulé', 'payé', 'envoyé')),

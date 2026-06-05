@@ -39,6 +39,7 @@ function normalizeType(value: string): DocType {
   if (v.includes('devis') || v === 'dev' || v === 'd') return 'devis'
   if (v.includes('commande') || v === 'cmd' || v === 'c' || v.includes('order')) return 'commande'
   if (v.includes('avoir') || v === 'avo' || v === 'a' || v.includes('credit')) return 'avoir'
+  if (v.includes('bl') || v.includes('bon de liv') || v.includes('livraison')) return 'bl'
   return 'facture'
 }
 
@@ -101,6 +102,10 @@ export function mapRowsToDocuments(
 
     if (mapping.client_numero && row[mapping.client_numero]) {
       doc.client_numero = String(row[mapping.client_numero])
+    }
+
+    if (mapping.piece_origine && row[mapping.piece_origine]) {
+      doc.piece_origine = String(row[mapping.piece_origine])
     }
 
     if (mapping.notes && row[mapping.notes]) {

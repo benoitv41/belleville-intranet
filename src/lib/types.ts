@@ -1,4 +1,4 @@
-export type DocType = 'facture' | 'devis' | 'commande' | 'avoir'
+export type DocType = 'facture' | 'devis' | 'commande' | 'avoir' | 'bl'
 export type DocStatut = 'en_cours' | 'validé' | 'annulé' | 'payé' | 'envoyé'
 
 export interface Document {
@@ -9,6 +9,7 @@ export interface Document {
   commercial_nom: string
   client: string
   client_numero?: string
+  piece_origine?: string
   montant_ht: number
   montant_ttc?: number
   statut: DocStatut
@@ -28,6 +29,7 @@ export interface ColumnMapping {
   commercial_nom: string
   client: string
   client_numero?: string
+  piece_origine?: string
   date: string
   montant_ht: string
   montant_ttc?: string
