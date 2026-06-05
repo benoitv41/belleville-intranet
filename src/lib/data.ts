@@ -18,8 +18,21 @@ export async function getDocuments(): Promise<Document[]> {
     return DEMO_DOCUMENTS
   }
   const supabase = getSupabaseClient()
-  const { data } = await supabase.from('documents').select('*').order('date', { ascending: false })
-  return (data || []) as Document[]
+  const PAGE = 1000
+  const all: Document[] = []
+  let from = 0
+  while (true) {
+    const { data, error } = await supabase
+      .from('documents')
+      .select('*')
+      .order('date', { ascending: false })
+      .range(from, from + PAGE - 1)
+    if (error) throw new Error(error.message)
+    all.push(...((data || []) as Document[]))
+    if (!data || data.length < PAGE) break
+    from += PAGE
+  }
+  return all
 }
 
 export async function getCommerciaux(): Promise<Commercial[]> {
