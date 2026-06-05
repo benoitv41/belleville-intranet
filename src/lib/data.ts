@@ -1,3 +1,4 @@
+import { createClient } from '@supabase/supabase-js'
 import { Document, Commercial } from './types'
 
 const isSupabaseConfigured = !!(
@@ -6,13 +7,17 @@ const isSupabaseConfigured = !!(
   process.env.NEXT_PUBLIC_SUPABASE_URL !== 'https://placeholder.supabase.co'
 )
 
+function getSupabaseClient() {
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  return createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, key)
+}
+
 export async function getDocuments(): Promise<Document[]> {
   if (!isSupabaseConfigured) {
     const { DEMO_DOCUMENTS } = await import('./demo-data')
     return DEMO_DOCUMENTS
   }
-  const { createClient } = await import('./supabase/server')
-  const supabase = await createClient()
+  const supabase = getSupabaseClient()
   const { data } = await supabase.from('documents').select('*').order('date', { ascending: false })
   return (data || []) as Document[]
 }
@@ -22,8 +27,7 @@ export async function getCommerciaux(): Promise<Commercial[]> {
     const { DEMO_COMMERCIAUX } = await import('./demo-data')
     return DEMO_COMMERCIAUX
   }
-  const { createClient } = await import('./supabase/server')
-  const supabase = await createClient()
+  const supabase = getSupabaseClient()
   const { data } = await supabase.from('commerciaux').select('*').order('nom')
   return (data || []) as Commercial[]
 }
