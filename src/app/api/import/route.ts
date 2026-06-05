@@ -28,28 +28,29 @@ export async function POST(req: NextRequest) {
       await supabase.from('commerciaux').upsert({ nom, objectif_mensuel: 0 }, { onConflict: 'nom', ignoreDuplicates: true })
     }
 
-    const BATCH = 100
-    let inserted = 0
-    let skipped = 0
+    // Fetch existing numero values to deduplicate
+    const incomingNumeros = documents
+      .map((d: { numero?: string }) => d.numero)
+      .filter(Boolean) as string[]
 
-    const withNumero = documents.filter((d: { numero?: string }) => d.numero)
-    const withoutNumero = documents.filter((d: { numero?: string }) => !d.numero)
-
-    // Upsert docs with a numero — skips duplicates
-    for (let i = 0; i < withNumero.length; i += BATCH) {
-      const batch = withNumero.slice(i, i + BATCH)
-      const { data, error } = await supabase
+    const existingNumeros = new Set<string>()
+    if (incomingNumeros.length > 0) {
+      const { data: existing } = await supabase
         .from('documents')
-        .upsert(batch, { onConflict: 'numero', ignoreDuplicates: true })
-        .select('id')
-      if (error) throw new Error(error.message)
-      inserted += data?.length ?? 0
-      skipped += batch.length - (data?.length ?? 0)
+        .select('numero')
+        .in('numero', incomingNumeros)
+      existing?.forEach((d: { numero: string }) => existingNumeros.add(d.numero))
     }
 
-    // Insert docs without numero (no dedup possible)
-    for (let i = 0; i < withoutNumero.length; i += BATCH) {
-      const batch = withoutNumero.slice(i, i + BATCH)
+    const toInsert = documents.filter((d: { numero?: string }) =>
+      !d.numero || !existingNumeros.has(d.numero)
+    )
+    const skipped = documents.length - toInsert.length
+
+    const BATCH = 100
+    let inserted = 0
+    for (let i = 0; i < toInsert.length; i += BATCH) {
+      const batch = toInsert.slice(i, i + BATCH)
       const { error } = await supabase.from('documents').insert(batch)
       if (error) throw new Error(error.message)
       inserted += batch.length
