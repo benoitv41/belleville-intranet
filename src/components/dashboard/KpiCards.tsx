@@ -58,16 +58,16 @@ export function KpiCards({ kpis }: Props) {
   return (
     <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
       {cards.map(({ label, value, sub, icon: Icon, trend, accent, iconBg, iconColor }) => (
-        <div key={label} className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+        <div key={label} className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
           <div style={{ height: '3px', backgroundColor: accent }} />
-          <div className="p-5">
+          <div className="p-6">
             <div className="flex items-center justify-between mb-3">
-              <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">{label}</span>
+              <span className="text-xs font-semibold text-gray-500 uppercase tracking-[0.1em]">{label}</span>
               <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: iconBg }}>
                 <Icon className="w-4 h-4" style={{ color: iconColor }} />
               </div>
             </div>
-            <p className="text-2xl font-bold text-gray-900">{value}</p>
+            <p className="text-3xl font-bold text-gray-900">{value}</p>
             <div className="flex items-center gap-1 mt-1.5">
               {trend !== undefined && (
                 <span className={`text-xs font-semibold flex items-center gap-0.5 ${trend >= 0 ? 'text-green-600' : 'text-red-500'}`}>

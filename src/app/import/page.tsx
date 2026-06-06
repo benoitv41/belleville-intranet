@@ -8,10 +8,12 @@ export default function ImportPage() {
     <div className="p-6 max-w-4xl">
       <div className="flex items-start justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold mb-1" style={{ color: '#1C3461' }}>Importer des pièces</h1>
-          <p className="text-gray-500 text-sm">
-            Importez vos factures, devis et commandes depuis un fichier Excel (.xlsx) ou CSV.
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] mb-2 flex items-center gap-2" style={{ color: '#E8630A' }}>
+            <span className="w-6 h-px inline-block" style={{ backgroundColor: '#E8630A' }}></span>
+            Import de données
           </p>
+          <h1 className="font-display text-4xl font-semibold leading-tight" style={{ color: '#1C3461' }}>Importer des pièces</h1>
+          <p className="text-gray-400 text-sm mt-1">Importez vos factures, devis et commandes depuis un fichier Excel (.xlsx) ou CSV.</p>
         </div>
         {isSupabaseConfigured && <ResetDatabase />}
       </div>

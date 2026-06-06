@@ -20,8 +20,12 @@ export default async function CrmPage() {
   return (
     <div className="p-6 flex flex-col" style={{ height: 'calc(100vh - 0px)' }}>
       <div className="mb-4 flex-shrink-0">
-        <h1 className="text-2xl font-bold" style={{ color: '#1C3461' }}>CRM — Opportunités</h1>
-        <p className="text-gray-500 text-sm mt-0.5">Suivi du pipeline commercial par étape</p>
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] mb-2 flex items-center gap-2" style={{ color: '#E8630A' }}>
+          <span className="w-6 h-px inline-block" style={{ backgroundColor: '#E8630A' }}></span>
+          Pipeline commercial
+        </p>
+        <h1 className="font-display text-4xl font-semibold leading-tight" style={{ color: '#1C3461' }}>CRM — Opportunités</h1>
+        <p className="text-gray-400 text-sm mt-1">Suivi du pipeline commercial par étape</p>
       </div>
       <div className="flex-1 overflow-hidden">
         <KanbanBoard

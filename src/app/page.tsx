@@ -42,8 +42,12 @@ export default async function DashboardPage({
     <div className="p-6 space-y-6">
       <div className="flex items-start justify-between">
         <div>
-          <h1 className="text-2xl font-bold" style={{ color: '#1C3461' }}>Dashboard</h1>
-          <p className="text-gray-500 text-sm mt-0.5">{filteredDocs.length} pièces · {commerciaux.length} commerciaux</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] mb-2 flex items-center gap-2" style={{ color: '#E8630A' }}>
+            <span className="w-6 h-px inline-block" style={{ backgroundColor: '#E8630A' }}></span>
+            Intranet commercial
+          </p>
+          <h1 className="font-display text-4xl font-semibold leading-tight" style={{ color: '#1C3461' }}>Dashboard</h1>
+          <p className="text-gray-400 text-sm mt-1">{filteredDocs.length} pièces · {commerciaux.length} commerciaux</p>
         </div>
         {!isSupabaseConfigured && (
           <Link href="/import" className="flex items-center gap-2 text-xs bg-amber-50 border border-amber-200 text-amber-700 rounded-lg px-3 py-2 hover:bg-amber-100 transition-colors">

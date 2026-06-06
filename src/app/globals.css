@@ -56,6 +56,11 @@
   --color-brand-orange-dark: #c4520a;
   --color-brand-orange-100: #fde8d5;
   --color-brand-orange-light: #f07830;
+  --font-cormorant: var(--font-cormorant);
+}
+
+.font-display {
+  font-family: var(--font-cormorant), Georgia, serif;
 }
 
 :root {

@@ -20,12 +20,12 @@ export function Sidebar() {
     <aside className="w-60 min-h-screen flex flex-col flex-shrink-0" style={{ backgroundColor: '#1C3461' }}>
       {/* Logo */}
       <div className="flex items-center gap-3 px-5 py-5" style={{ backgroundColor: '#142850' }}>
-        <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: '#E8630A' }}>
-          <span className="text-white font-black text-sm leading-none">B</span>
+        <div className="w-9 h-9 rounded-full border-2 border-white/30 flex items-center justify-center flex-shrink-0">
+          <span className="text-white font-bold text-base leading-none" style={{ fontFamily: 'var(--font-cormorant), Georgia, serif' }}>B</span>
         </div>
         <div>
           <p className="font-bold text-white text-sm tracking-wide leading-tight">BELLEVILLE</p>
-          <p className="text-xs leading-tight" style={{ color: 'rgba(255,255,255,0.5)' }}>Intranet commercial</p>
+          <p className="text-xs leading-tight" style={{ color: 'rgba(255,255,255,0.4)', letterSpacing: '0.08em', fontSize: '0.6rem' }}>VERRERIE SCIENTIFIQUE · PARIS</p>
         </div>
       </div>
 

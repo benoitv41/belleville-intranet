@@ -12,7 +12,7 @@ interface CaMensuelProps { data: { month: string; ca: number }[] }
 export function CaMensuelChart({ data }: CaMensuelProps) {
   return (
     <div className="bg-white rounded-xl border border-gray-200 p-5 shadow-sm">
-      <h3 className="font-semibold text-gray-800 mb-4">Évolution CA mensuel</h3>
+      <h3 className="font-semibold text-sm uppercase tracking-[0.1em] mb-4" style={{ color: '#1C3461' }}>Évolution CA mensuel</h3>
       <ResponsiveContainer width="100%" height={220}>
         <LineChart data={data} margin={{ top: 4, right: 8, bottom: 0, left: 0 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
@@ -30,7 +30,7 @@ interface CaCommercialProps { data: CommercialStats[]; objectifs?: Record<string
 export function CaCommercialChart({ data }: CaCommercialProps) {
   return (
     <div className="bg-white rounded-xl border border-gray-200 p-5 shadow-sm">
-      <h3 className="font-semibold text-gray-800 mb-4">CA par commercial</h3>
+      <h3 className="font-semibold text-sm uppercase tracking-[0.1em] mb-4" style={{ color: '#1C3461' }}>CA par commercial</h3>
       <ResponsiveContainer width="100%" height={220}>
         <BarChart data={data} margin={{ top: 4, right: 8, bottom: 0, left: 0 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
@@ -48,7 +48,7 @@ interface RepartitionProps { data: { name: string; value: number; color: string 
 export function RepartitionTypesChart({ data }: RepartitionProps) {
   return (
     <div className="bg-white rounded-xl border border-gray-200 p-5 shadow-sm">
-      <h3 className="font-semibold text-gray-800 mb-4">Répartition par type</h3>
+      <h3 className="font-semibold text-sm uppercase tracking-[0.1em] mb-4" style={{ color: '#1C3461' }}>Répartition par type</h3>
       <ResponsiveContainer width="100%" height={220}>
         <PieChart>
           <Pie data={data} cx="50%" cy="50%" innerRadius={55} outerRadius={85} paddingAngle={3} dataKey="value">
@@ -68,7 +68,7 @@ interface PipelineProps { data: { nom: string; devis: number; commandes: number;
 export function PipelineChart({ data }: PipelineProps) {
   return (
     <div className="bg-white rounded-xl border border-gray-200 p-5 shadow-sm">
-      <h3 className="font-semibold text-gray-800 mb-4">Pipeline par commercial</h3>
+      <h3 className="font-semibold text-sm uppercase tracking-[0.1em] mb-4" style={{ color: '#1C3461' }}>Pipeline par commercial</h3>
       <ResponsiveContainer width="100%" height={220}>
         <BarChart data={data} margin={{ top: 4, right: 8, bottom: 0, left: 0 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
@@ -89,7 +89,7 @@ export function ComparaisonAnnuelleChart({ data }: { data: ComparaisonData }) {
   const { months, thisYear, lastYear } = data
   return (
     <div className="bg-white rounded-xl border border-gray-200 p-5 shadow-sm">
-      <h3 className="font-semibold text-gray-800 mb-4">Comparaison {thisYear} vs {lastYear}</h3>
+      <h3 className="font-semibold text-sm uppercase tracking-[0.1em] mb-4" style={{ color: '#1C3461' }}>Comparaison {thisYear} vs {lastYear}</h3>
       <ResponsiveContainer width="100%" height={220}>
         <LineChart data={months} margin={{ top: 4, right: 8, bottom: 0, left: 0 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
@@ -109,7 +109,7 @@ interface ConversionProps { data: CommercialStats[] }
 export function ConversionChart({ data }: ConversionProps) {
   return (
     <div className="bg-white rounded-xl border border-gray-200 p-5 shadow-sm">
-      <h3 className="font-semibold text-gray-800 mb-4">Taux de conversion</h3>
+      <h3 className="font-semibold text-sm uppercase tracking-[0.1em] mb-4" style={{ color: '#1C3461' }}>Taux de conversion</h3>
       <ResponsiveContainer width="100%" height={220}>
         <BarChart data={data} layout="vertical" margin={{ top: 4, right: 24, bottom: 0, left: 48 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" horizontal={false} />
