@@ -2,55 +2,140 @@
 
 import { useState } from 'react'
 import { Document, Commercial, CommercialStats } from '@/lib/types'
-import { formatCurrency, caParCommercial, caMensuel } from '@/lib/stats'
-import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
-import { TrendingUp, FileText, ClipboardList, ShoppingCart, Target } from 'lucide-react'
+import { formatCurrency, caParCommercial } from '@/lib/stats'
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts'
+import { TrendingUp, FileText, ClipboardList, ShoppingCart, CheckCircle2, Circle } from 'lucide-react'
 import { format, parseISO, subMonths, isWithinInterval, startOfMonth, endOfMonth } from 'date-fns'
 import { fr } from 'date-fns/locale'
+
+const OBJECTIFS = [10000, 15000, 20000, 30000, 40000, 50000]
 
 interface Props {
   documents: Document[]
   commerciaux: Commercial[]
 }
 
+function ObjectifGauge({ caMois }: { caMois: number }) {
+  const atteints = OBJECTIFS.filter(o => caMois >= o)
+  const currentIdx = OBJECTIFS.findIndex(o => caMois < o)
+  const currentObjectif = currentIdx === -1 ? OBJECTIFS[OBJECTIFS.length - 1] : OBJECTIFS[currentIdx]
+  const prevObjectif = currentIdx <= 0 ? 0 : OBJECTIFS[currentIdx - 1]
+  const allDone = currentIdx === -1
+
+  const segmentProgress = allDone
+    ? 100
+    : Math.min(100, Math.round(((caMois - prevObjectif) / (currentObjectif - prevObjectif)) * 100))
+
+  const barColor = allDone
+    ? 'bg-green-500'
+    : segmentProgress >= 75 ? 'bg-blue-500'
+    : segmentProgress >= 40 ? 'bg-amber-500'
+    : 'bg-orange-400'
+
+  return (
+    <div className="bg-white rounded-xl border border-gray-200 p-5 shadow-sm">
+      <div className="flex items-center justify-between mb-4">
+        <div>
+          <p className="text-sm font-medium text-gray-500">Facturation du mois (HT)</p>
+          <p className="text-2xl font-bold text-gray-900 mt-0.5">{formatCurrency(caMois)}</p>
+        </div>
+        {allDone ? (
+          <span className="text-xs font-medium bg-green-100 text-green-700 px-2.5 py-1 rounded-full">
+            Objectif max atteint 🏆
+          </span>
+        ) : (
+          <div className="text-right">
+            <p className="text-xs text-gray-400">Objectif en cours</p>
+            <p className="text-lg font-bold text-blue-600">{formatCurrency(currentObjectif)}</p>
+          </div>
+        )}
+      </div>
+
+      {/* Progress bar for current segment */}
+      {!allDone && (
+        <div className="mb-5">
+          <div className="flex justify-between text-xs text-gray-400 mb-1">
+            <span>{formatCurrency(prevObjectif)}</span>
+            <span>{segmentProgress}%</span>
+            <span>{formatCurrency(currentObjectif)}</span>
+          </div>
+          <div className="h-3 bg-gray-100 rounded-full overflow-hidden">
+            <div
+              className={`h-full rounded-full transition-all duration-500 ${barColor}`}
+              style={{ width: `${segmentProgress}%` }}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Milestones */}
+      <div className="grid grid-cols-6 gap-1">
+        {OBJECTIFS.map((o, i) => {
+          const done = caMois >= o
+          const active = !done && OBJECTIFS.findIndex(x => caMois < x) === i
+          return (
+            <div
+              key={o}
+              className={`flex flex-col items-center gap-1 p-2 rounded-lg transition-colors ${
+                active ? 'bg-blue-50 ring-1 ring-blue-200' : ''
+              }`}
+            >
+              {done ? (
+                <CheckCircle2 className="w-5 h-5 text-green-500" />
+              ) : (
+                <Circle className={`w-5 h-5 ${active ? 'text-blue-400' : 'text-gray-200'}`} />
+              )}
+              <span className={`text-xs font-medium ${done ? 'text-green-600' : active ? 'text-blue-600' : 'text-gray-400'}`}>
+                {o >= 1000 ? `${o / 1000}k` : o}
+              </span>
+            </div>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+
 export function CommerciauxView({ documents, commerciaux }: Props) {
   const [selected, setSelected] = useState<string | null>(null)
 
   const stats = caParCommercial(documents)
-  const allCommerciaux = [...new Set([...stats.map(s => s.nom), ...commerciaux.map(c => c.nom)])]
 
   const selectedDocs = selected ? documents.filter(d => d.commercial_nom === selected) : []
-  const selectedCommercial = commerciaux.find(c => c.nom === selected)
   const selectedStats = stats.find(s => s.nom === selected)
 
-  const selectedMensuel = selected ? (() => {
-    const result: Record<string, number> = {}
+  const now = new Date()
+
+  const docsCeMois = selectedDocs.filter(d =>
+    isWithinInterval(parseISO(d.date), { start: startOfMonth(now), end: endOfMonth(now) })
+  )
+  const caCeMois =
+    docsCeMois.filter(d => d.type === 'facture' && d.statut !== 'annulé').reduce((s, d) => s + d.montant_ht, 0) -
+    docsCeMois.filter(d => d.type === 'avoir').reduce((s, d) => s + d.montant_ht, 0)
+
+  const mensuelData = selected ? (() => {
+    const result: Record<string, { commandes: number; facturations: number }> = {}
     for (let i = 11; i >= 0; i--) {
-      const d = subMonths(new Date(), i)
+      const d = subMonths(now, i)
       const key = format(d, 'yyyy-MM')
-      result[key] = 0
+      result[key] = { commandes: 0, facturations: 0 }
     }
-    selectedDocs.filter(d => d.type === 'facture' && d.statut !== 'annulé').forEach(doc => {
+    selectedDocs.forEach(doc => {
       const key = doc.date.slice(0, 7)
-      if (key in result) result[key] += doc.montant_ht
+      if (!(key in result)) return
+      if (doc.type === 'commande' && doc.statut !== 'annulé') result[key].commandes += doc.montant_ht
+      if (doc.type === 'facture' && doc.statut !== 'annulé') result[key].facturations += doc.montant_ht
     })
-    return Object.entries(result).map(([month, ca]) => ({
+    return Object.entries(result).map(([month, data]) => ({
       month: format(parseISO(`${month}-01`), 'MMM yy', { locale: fr }),
-      ca: Math.round(ca),
+      Commandes: Math.round(data.commandes),
+      Facturations: Math.round(data.facturations),
     }))
   })() : []
 
-  const now = new Date()
-  const caCeMois = selectedDocs
-    .filter(d => d.type === 'facture' && d.statut !== 'annulé')
-    .filter(d => isWithinInterval(parseISO(d.date), { start: startOfMonth(now), end: endOfMonth(now) }))
-    .reduce((s, d) => s + d.montant_ht, 0)
-
-  const objectif = selectedCommercial?.objectif_mensuel || 0
-  const progressPct = objectif > 0 ? Math.min(100, Math.round((caCeMois / objectif) * 100)) : 0
-
   return (
     <div className="flex gap-6">
+      {/* Sidebar */}
       <div className="w-64 flex-shrink-0 space-y-2">
         <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide px-1 mb-3">Commerciaux</p>
         {stats.map(s => (
@@ -65,12 +150,13 @@ export function CommerciauxView({ documents, commerciaux }: Props) {
           >
             <p className={`font-medium text-sm ${selected === s.nom ? 'text-white' : 'text-gray-800'}`}>{s.nom}</p>
             <p className={`text-xs mt-0.5 ${selected === s.nom ? 'text-blue-100' : 'text-gray-500'}`}>
-              {formatCurrency(s.ca)} CA
+              {formatCurrency(s.ca)} CA facturé
             </p>
           </button>
         ))}
       </div>
 
+      {/* Main content */}
       <div className="flex-1 space-y-4">
         {!selected ? (
           <>
@@ -79,7 +165,7 @@ export function CommerciauxView({ documents, commerciaux }: Props) {
                 <button
                   key={s.nom}
                   onClick={() => setSelected(s.nom)}
-                  className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm text-left hover:border-blue-200 hover:shadow-md transition-all group"
+                  className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm text-left hover:border-blue-200 hover:shadow-md transition-all"
                 >
                   <div className="flex items-center justify-between mb-2">
                     <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-sm">
@@ -108,14 +194,14 @@ export function CommerciauxView({ documents, commerciaux }: Props) {
             </div>
 
             <div className="bg-white rounded-xl border border-gray-200 p-5 shadow-sm">
-              <h3 className="font-semibold text-gray-800 mb-4">Comparaison CA par commercial</h3>
+              <h3 className="font-semibold text-gray-800 mb-4">CA facturé HT par commercial</h3>
               <ResponsiveContainer width="100%" height={240}>
                 <BarChart data={stats} margin={{ top: 4, right: 8, bottom: 0, left: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
                   <XAxis dataKey="nom" tick={{ fontSize: 12 }} />
                   <YAxis tickFormatter={v => `${(v / 1000).toFixed(0)}k`} tick={{ fontSize: 12 }} />
                   <Tooltip formatter={(v) => formatCurrency(Number(v))} />
-                  <Bar dataKey="ca" fill="#3B82F6" radius={[4, 4, 0, 0]} name="CA HT" />
+                  <Bar dataKey="ca" fill="#3B82F6" radius={[4, 4, 0, 0]} name="CA HT facturé" />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -130,10 +216,7 @@ export function CommerciauxView({ documents, commerciaux }: Props) {
                       <span className="text-sm font-medium text-gray-800">{s.tauxConversion}%</span>
                     </div>
                     <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-                      <div
-                        className="h-full bg-purple-500 rounded-full transition-all"
-                        style={{ width: `${s.tauxConversion}%` }}
-                      />
+                      <div className="h-full bg-purple-500 rounded-full transition-all" style={{ width: `${s.tauxConversion}%` }} />
                     </div>
                   </div>
                 ))}
@@ -155,28 +238,11 @@ export function CommerciauxView({ documents, commerciaux }: Props) {
               </button>
             </div>
 
-            {objectif > 0 && (
-              <div className="bg-white rounded-xl border border-gray-200 p-5 shadow-sm">
-                <div className="flex items-center justify-between mb-2">
-                  <div className="flex items-center gap-2">
-                    <Target className="w-4 h-4 text-blue-600" />
-                    <span className="font-medium text-gray-700 text-sm">Objectif mensuel</span>
-                  </div>
-                  <span className="text-sm font-bold text-gray-800">{formatCurrency(caCeMois)} / {formatCurrency(objectif)}</span>
-                </div>
-                <div className="h-3 bg-gray-100 rounded-full overflow-hidden">
-                  <div
-                    className={`h-full rounded-full transition-all ${progressPct >= 100 ? 'bg-green-500' : progressPct >= 70 ? 'bg-blue-500' : 'bg-amber-500'}`}
-                    style={{ width: `${progressPct}%` }}
-                  />
-                </div>
-                <p className="text-xs text-gray-400 mt-1">{progressPct}% de l'objectif atteint ce mois</p>
-              </div>
-            )}
+            <ObjectifGauge caMois={caCeMois} />
 
             <div className="grid grid-cols-4 gap-3">
               {[
-                { label: 'CA Total', value: formatCurrency(selectedStats?.ca || 0), icon: TrendingUp, color: 'text-blue-600', bg: 'bg-blue-50' },
+                { label: 'CA facturé HT', value: formatCurrency(selectedStats?.ca || 0), icon: TrendingUp, color: 'text-blue-600', bg: 'bg-blue-50' },
                 { label: 'Factures', value: selectedStats?.factures || 0, icon: FileText, color: 'text-indigo-600', bg: 'bg-indigo-50' },
                 { label: 'Devis', value: selectedStats?.devis || 0, icon: ClipboardList, color: 'text-amber-600', bg: 'bg-amber-50' },
                 { label: 'Conversion', value: `${selectedStats?.tauxConversion || 0}%`, icon: ShoppingCart, color: 'text-green-600', bg: 'bg-green-50' },
@@ -194,15 +260,17 @@ export function CommerciauxView({ documents, commerciaux }: Props) {
             </div>
 
             <div className="bg-white rounded-xl border border-gray-200 p-5 shadow-sm">
-              <h3 className="font-semibold text-gray-800 mb-4">Évolution CA mensuel</h3>
-              <ResponsiveContainer width="100%" height={200}>
-                <LineChart data={selectedMensuel} margin={{ top: 4, right: 8, bottom: 0, left: 0 }}>
+              <h3 className="font-semibold text-gray-800 mb-4">Commandes & facturations mensuelles (HT)</h3>
+              <ResponsiveContainer width="100%" height={220}>
+                <BarChart data={mensuelData} margin={{ top: 4, right: 8, bottom: 0, left: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
                   <XAxis dataKey="month" tick={{ fontSize: 12 }} />
                   <YAxis tickFormatter={v => `${(v / 1000).toFixed(0)}k`} tick={{ fontSize: 12 }} />
                   <Tooltip formatter={(v) => formatCurrency(Number(v))} />
-                  <Line type="monotone" dataKey="ca" stroke="#3B82F6" strokeWidth={2.5} dot={{ r: 3 }} name="CA HT" />
-                </LineChart>
+                  <Legend iconSize={10} />
+                  <Bar dataKey="Commandes" fill="#10B981" radius={[3, 3, 0, 0]} />
+                  <Bar dataKey="Facturations" fill="#3B82F6" radius={[3, 3, 0, 0]} />
+                </BarChart>
               </ResponsiveContainer>
             </div>
 

@@ -74,10 +74,12 @@ export function computeKpis(docs: Document[]): KpiData {
   const endLastMonth = endOfMonth(subMonths(now, 1))
 
   const factures = docs.filter(d => d.type === 'facture' && d.statut !== 'annulé')
+  const avoirs = docs.filter(d => d.type === 'avoir')
   const devis = docs.filter(d => d.type === 'devis')
   const commandes = docs.filter(d => d.type === 'commande')
 
   const caTotal = factures.reduce((sum, d) => sum + d.montant_ht, 0)
+    - avoirs.reduce((sum, d) => sum + d.montant_ht, 0)
 
   const facturesMois = factures.filter(d => {
     const date = parseISO(d.date)
@@ -118,6 +120,9 @@ export function caParCommercial(docs: Document[]): CommercialStats[] {
       map[doc.commercial_nom].ca += doc.montant_ht
       map[doc.commercial_nom].factures++
     }
+    if (doc.type === 'avoir') {
+      map[doc.commercial_nom].ca -= doc.montant_ht
+    }
     if (doc.type === 'devis') map[doc.commercial_nom].devis++
     if (doc.type === 'commande') map[doc.commercial_nom].commandes++
   })
@@ -137,9 +142,11 @@ export function caMensuel(docs: Document[], months = 12) {
     result[key] = 0
   }
 
-  docs.filter(d => d.type === 'facture' && d.statut !== 'annulé').forEach(doc => {
+  docs.forEach(doc => {
     const key = doc.date.slice(0, 7)
-    if (key in result) result[key] += doc.montant_ht
+    if (!(key in result)) return
+    if (doc.type === 'facture' && doc.statut !== 'annulé') result[key] += doc.montant_ht
+    if (doc.type === 'avoir') result[key] -= doc.montant_ht
   })
 
   return Object.entries(result).map(([month, ca]) => ({
