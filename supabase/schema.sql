@@ -31,7 +31,24 @@ create index if not exists documents_date_idx on documents(date desc);
 create index if not exists documents_commercial_idx on documents(commercial_nom);
 create index if not exists documents_type_idx on documents(type);
 
+create table if not exists opportunites (
+  id uuid default gen_random_uuid() primary key,
+  titre text not null,
+  client text,
+  client_numero text,
+  commercial_nom text,
+  montant_ht numeric,
+  etape_id integer not null default 0,
+  notes text,
+  created_at timestamp with time zone default now(),
+  updated_at timestamp with time zone default now()
+);
+
+create index if not exists opportunites_etape_idx on opportunites(etape_id);
+create index if not exists opportunites_commercial_idx on opportunites(commercial_nom);
+
 -- RLS (Row Level Security) — désactivé pour l'intranet sans auth
 -- Si vous ajoutez de l'authentification, activez RLS et ajoutez des policies
 alter table commerciaux disable row level security;
 alter table documents disable row level security;
+alter table opportunites disable row level security;

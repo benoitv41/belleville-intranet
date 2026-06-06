@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { LayoutDashboard, Upload, FileText, Users, Settings, Building2 } from 'lucide-react'
+import { LayoutDashboard, Upload, FileText, Users, Settings, Building2, Kanban } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 const nav = [
@@ -10,6 +10,7 @@ const nav = [
   { href: '/import', label: 'Importer', icon: Upload },
   { href: '/documents', label: 'Documents', icon: FileText },
   { href: '/commerciaux', label: 'Commerciaux', icon: Users },
+  { href: '/crm', label: 'CRM', icon: Kanban },
 ]
 
 export function Sidebar() {
