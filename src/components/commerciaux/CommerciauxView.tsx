@@ -43,7 +43,7 @@ function ObjectifGauge({ caMois }: { caMois: number }) {
   const prevObjectif = currentIdx <= 0 ? 0 : OBJECTIFS[currentIdx - 1]
   const allDone = currentIdx === -1
   const segmentProgress = allDone ? 100 : Math.min(100, Math.round(((caMois - prevObjectif) / (currentObjectif - prevObjectif)) * 100))
-  const barColor = allDone ? 'bg-green-500' : segmentProgress >= 75 ? 'bg-blue-500' : segmentProgress >= 40 ? 'bg-amber-500' : 'bg-orange-400'
+  const barColor = allDone ? 'bg-green-500' : segmentProgress >= 75 ? 'bg-[#E8630A]' : segmentProgress >= 40 ? 'bg-amber-500' : 'bg-orange-400'
 
   return (
     <div className="bg-white rounded-xl border border-gray-200 p-5 shadow-sm">
@@ -57,7 +57,7 @@ function ObjectifGauge({ caMois }: { caMois: number }) {
         ) : (
           <div className="text-right">
             <p className="text-xs text-gray-400">Objectif en cours</p>
-            <p className="text-lg font-bold text-blue-600">{formatCurrency(currentObjectif)}</p>
+            <p className="text-lg font-bold" style={{ color: '#E8630A' }}>{formatCurrency(currentObjectif)}</p>
           </div>
         )}
       </div>
@@ -78,9 +78,9 @@ function ObjectifGauge({ caMois }: { caMois: number }) {
           const done = caMois >= o
           const active = !done && OBJECTIFS.findIndex(x => caMois < x) === i
           return (
-            <div key={o} className={`flex flex-col items-center gap-1 p-2 rounded-lg ${active ? 'bg-blue-50 ring-1 ring-blue-200' : ''}`}>
-              {done ? <CheckCircle2 className="w-5 h-5 text-green-500" /> : <Circle className={`w-5 h-5 ${active ? 'text-blue-400' : 'text-gray-200'}`} />}
-              <span className={`text-xs font-medium ${done ? 'text-green-600' : active ? 'text-blue-600' : 'text-gray-400'}`}>
+            <div key={o} className={`flex flex-col items-center gap-1 p-2 rounded-lg ${active ? 'ring-1 ring-[#E8630A]/30' : ''}`} style={active ? { backgroundColor: '#fde8d5' } : {}}>
+              {done ? <CheckCircle2 className="w-5 h-5 text-green-500" /> : <Circle className={`w-5 h-5 ${active ? 'text-gray-400' : 'text-gray-200'}`} style={active ? { color: '#E8630A' } : {}} />}
+              <span className={`text-xs font-medium ${done ? 'text-green-600' : active ? '' : 'text-gray-400'}`} style={active ? { color: '#E8630A' } : {}}>
                 {o >= 1000 ? `${o / 1000}k` : o}
               </span>
             </div>
@@ -157,9 +157,10 @@ export function CommerciauxView({ documents, commerciaux }: Props) {
         <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide px-1 mb-3">Commerciaux</p>
         {stats.map(s => (
           <button key={s.nom} onClick={() => setSelected(selected === s.nom ? null : s.nom)}
-            className={`w-full text-left px-4 py-3 rounded-xl border transition-all ${selected === s.nom ? 'bg-blue-600 text-white border-blue-600 shadow-md' : 'bg-white border-gray-200 hover:border-blue-200 hover:bg-blue-50'}`}>
+            style={selected === s.nom ? { backgroundColor: '#E8630A', borderColor: '#E8630A' } : {}}
+            className={`w-full text-left px-4 py-3 rounded-xl border transition-all ${selected === s.nom ? 'text-white shadow-md' : 'bg-white border-gray-200 hover:border-orange-200 hover:bg-orange-50'}`}>
             <p className={`font-medium text-sm ${selected === s.nom ? 'text-white' : 'text-gray-800'}`}>{s.nom}</p>
-            <p className={`text-xs mt-0.5 ${selected === s.nom ? 'text-blue-100' : 'text-gray-500'}`}>{formatCurrency(s.ca)} CA facturé</p>
+            <p className={`text-xs mt-0.5 ${selected === s.nom ? 'text-orange-100' : 'text-gray-500'}`}>{formatCurrency(s.ca)} CA facturé</p>
           </button>
         ))}
       </div>
@@ -171,7 +172,7 @@ export function CommerciauxView({ documents, commerciaux }: Props) {
           {/* Year */}
           <div className="relative">
             <select value={filters.year} onChange={e => setYear(e.target.value)}
-              className="text-sm border border-gray-200 rounded-lg px-3 py-1.5 pr-8 appearance-none bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-700">
+              className="text-sm border border-gray-200 rounded-lg px-3 py-1.5 pr-8 appearance-none bg-white focus:outline-none focus:ring-2 focus:ring-[#E8630A]/30 text-gray-700">
               <option value="">Toutes les années</option>
               {availableYears.map(y => <option key={y} value={y}>{y}</option>)}
             </select>
@@ -182,7 +183,7 @@ export function CommerciauxView({ documents, commerciaux }: Props) {
           {filters.year && (
             <div className="relative">
               <select value={filters.period} onChange={e => setFilters(f => ({ ...f, period: e.target.value }))}
-                className="text-sm border border-gray-200 rounded-lg px-3 py-1.5 pr-8 appearance-none bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-700">
+                className="text-sm border border-gray-200 rounded-lg px-3 py-1.5 pr-8 appearance-none bg-white focus:outline-none focus:ring-2 focus:ring-[#E8630A]/30 text-gray-700">
                 <option value="annee">Toute l'année</option>
                 {TRIMESTRES.map(t => <option key={t.id} value={t.id}>{t.label}</option>)}
                 {MOIS.map((m, i) => <option key={m} value={`m${m}`}>{MOIS_LABELS[i]}</option>)}
@@ -194,7 +195,7 @@ export function CommerciauxView({ documents, commerciaux }: Props) {
           {/* Client */}
           <div className="relative">
             <select value={filters.client} onChange={e => setFilters(f => ({ ...f, client: e.target.value }))}
-              className="text-sm border border-gray-200 rounded-lg px-3 py-1.5 pr-8 appearance-none bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-700">
+              className="text-sm border border-gray-200 rounded-lg px-3 py-1.5 pr-8 appearance-none bg-white focus:outline-none focus:ring-2 focus:ring-[#E8630A]/30 text-gray-700">
               <option value="">Tous les clients</option>
               {availableClients.map(c => <option key={c} value={c}>{c}</option>)}
             </select>
@@ -218,7 +219,7 @@ export function CommerciauxView({ documents, commerciaux }: Props) {
                 <button key={s.nom} onClick={() => setSelected(s.nom)}
                   className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm text-left hover:border-blue-200 hover:shadow-md transition-all">
                   <div className="flex items-center justify-between mb-2">
-                    <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-sm">
+                    <div className="w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm" style={{ backgroundColor: '#fde8d5', color: '#E8630A' }}>
                       {s.nom.split(' ').map(n => n[0]).join('').slice(0, 2)}
                     </div>
                     <span className="text-xs text-gray-400 font-medium">#{i + 1}</span>
@@ -242,7 +243,7 @@ export function CommerciauxView({ documents, commerciaux }: Props) {
                   <XAxis dataKey="nom" tick={{ fontSize: 12 }} />
                   <YAxis tickFormatter={v => `${(v / 1000).toFixed(0)}k`} tick={{ fontSize: 12 }} />
                   <Tooltip formatter={(v) => formatCurrency(Number(v))} />
-                  <Bar dataKey="ca" fill="#3B82F6" radius={[4, 4, 0, 0]} name="CA HT facturé" />
+                  <Bar dataKey="ca" fill="#E8630A" radius={[4, 4, 0, 0]} name="CA HT facturé" />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -280,8 +281,8 @@ export function CommerciauxView({ documents, commerciaux }: Props) {
 
             <div className="grid grid-cols-4 gap-3">
               {[
-                { label: 'CA facturé HT', value: formatCurrency(selectedStats?.ca || 0), icon: TrendingUp, color: 'text-blue-600', bg: 'bg-blue-50' },
-                { label: 'Factures', value: selectedStats?.factures || 0, icon: FileText, color: 'text-indigo-600', bg: 'bg-indigo-50' },
+                { label: 'CA facturé HT', value: formatCurrency(selectedStats?.ca || 0), icon: TrendingUp, color: 'text-orange-600', bg: 'bg-orange-50' },
+                { label: 'Factures', value: selectedStats?.factures || 0, icon: FileText, color: 'text-blue-900', bg: 'bg-blue-50' },
                 { label: 'Devis', value: selectedStats?.devis || 0, icon: ClipboardList, color: 'text-amber-600', bg: 'bg-amber-50' },
                 { label: 'Conversion', value: `${selectedStats?.tauxConversion || 0}%`, icon: ShoppingCart, color: 'text-green-600', bg: 'bg-green-50' },
               ].map(({ label, value, icon: Icon, color, bg }) => (
@@ -306,8 +307,8 @@ export function CommerciauxView({ documents, commerciaux }: Props) {
                   <YAxis tickFormatter={v => `${(v / 1000).toFixed(0)}k`} tick={{ fontSize: 12 }} />
                   <Tooltip formatter={(v) => formatCurrency(Number(v))} />
                   <Legend iconSize={10} />
-                  <Bar dataKey="Commandes" fill="#10B981" radius={[3, 3, 0, 0]} />
-                  <Bar dataKey="Facturations" fill="#3B82F6" radius={[3, 3, 0, 0]} />
+                  <Bar dataKey="Commandes" fill="#1C3461" radius={[3, 3, 0, 0]} />
+                  <Bar dataKey="Facturations" fill="#E8630A" radius={[3, 3, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </div>

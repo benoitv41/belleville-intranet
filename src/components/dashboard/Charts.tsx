@@ -19,7 +19,7 @@ export function CaMensuelChart({ data }: CaMensuelProps) {
           <XAxis dataKey="month" tick={{ fontSize: 12 }} />
           <YAxis tickFormatter={v => `${(v / 1000).toFixed(0)}k`} tick={{ fontSize: 12 }} />
           <Tooltip formatter={(v) => formatCurrency(Number(v))} />
-          <Line type="monotone" dataKey="ca" stroke="#3B82F6" strokeWidth={2.5} dot={{ r: 3 }} activeDot={{ r: 5 }} name="CA HT" />
+          <Line type="monotone" dataKey="ca" stroke="#E8630A" strokeWidth={2.5} dot={{ r: 3 }} activeDot={{ r: 5 }} name="CA HT" />
         </LineChart>
       </ResponsiveContainer>
     </div>
@@ -37,7 +37,7 @@ export function CaCommercialChart({ data }: CaCommercialProps) {
           <XAxis dataKey="nom" tick={{ fontSize: 12 }} />
           <YAxis tickFormatter={v => `${(v / 1000).toFixed(0)}k`} tick={{ fontSize: 12 }} />
           <Tooltip formatter={(v) => formatCurrency(Number(v))} />
-          <Bar dataKey="ca" fill="#3B82F6" radius={[4, 4, 0, 0]} name="CA HT" />
+          <Bar dataKey="ca" fill="#E8630A" radius={[4, 4, 0, 0]} name="CA HT" />
         </BarChart>
       </ResponsiveContainer>
     </div>
@@ -78,7 +78,7 @@ export function PipelineChart({ data }: PipelineProps) {
           <Legend iconSize={10} />
           <Bar dataKey="devis" stackId="a" fill="#F59E0B" name="Devis" />
           <Bar dataKey="commandes" stackId="a" fill="#10B981" name="Commandes" />
-          <Bar dataKey="factures" stackId="a" fill="#3B82F6" name="Factures" radius={[4, 4, 0, 0]} />
+          <Bar dataKey="factures" stackId="a" fill="#E8630A" name="Factures" radius={[4, 4, 0, 0]} />
         </BarChart>
       </ResponsiveContainer>
     </div>
@@ -97,8 +97,8 @@ export function ComparaisonAnnuelleChart({ data }: { data: ComparaisonData }) {
           <YAxis tickFormatter={v => `${(v / 1000).toFixed(0)}k`} tick={{ fontSize: 12 }} />
           <Tooltip formatter={(v) => formatCurrency(Number(v))} />
           <Legend iconSize={10} />
-          <Line type="monotone" dataKey="annee_courante" stroke="#3B82F6" strokeWidth={2.5} dot={{ r: 3 }} name={String(thisYear)} />
-          <Line type="monotone" dataKey="annee_precedente" stroke="#94A3B8" strokeWidth={2} strokeDasharray="4 4" dot={{ r: 3 }} name={String(lastYear)} />
+          <Line type="monotone" dataKey="annee_courante" stroke="#E8630A" strokeWidth={2.5} dot={{ r: 3 }} name={String(thisYear)} />
+          <Line type="monotone" dataKey="annee_precedente" stroke="#1C3461" strokeWidth={2} strokeDasharray="4 4" dot={{ r: 3 }} name={String(lastYear)} />
         </LineChart>
       </ResponsiveContainer>
     </div>
@@ -116,7 +116,7 @@ export function ConversionChart({ data }: ConversionProps) {
           <XAxis type="number" domain={[0, 100]} tickFormatter={v => `${v}%`} tick={{ fontSize: 12 }} />
           <YAxis type="category" dataKey="nom" tick={{ fontSize: 12 }} width={80} />
           <Tooltip formatter={(v) => `${v}%`} />
-          <Bar dataKey="tauxConversion" fill="#8B5CF6" radius={[0, 4, 4, 0]} name="Taux conversion" />
+          <Bar dataKey="tauxConversion" fill="#1C3461" radius={[0, 4, 4, 0]} name="Taux conversion" />
         </BarChart>
       </ResponsiveContainer>
     </div>

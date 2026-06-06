@@ -48,6 +48,16 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
+@theme {
+  --color-brand-navy: #1C3461;
+  --color-brand-navy-dark: #142850;
+  --color-brand-navy-light: #2a4a8a;
+  --color-brand-orange: #E8630A;
+  --color-brand-orange-dark: #c4520a;
+  --color-brand-orange-100: #fde8d5;
+  --color-brand-orange-light: #f07830;
+}
+
 :root {
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);

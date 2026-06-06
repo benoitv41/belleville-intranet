@@ -42,7 +42,7 @@ export default async function DashboardPage({
     <div className="p-6 space-y-6">
       <div className="flex items-start justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
+          <h1 className="text-2xl font-bold" style={{ color: '#1C3461' }}>Dashboard</h1>
           <p className="text-gray-500 text-sm mt-0.5">{filteredDocs.length} pièces · {commerciaux.length} commerciaux</p>
         </div>
         {!isSupabaseConfigured && (
@@ -80,7 +80,7 @@ export default async function DashboardPage({
       <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
         <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
           <h3 className="font-semibold text-gray-800">Dernières pièces</h3>
-          <Link href="/documents" className="text-sm text-blue-600 hover:underline">Voir tout</Link>
+          <Link href="/documents" className="text-sm hover:underline" style={{ color: '#E8630A' }}>Voir tout</Link>
         </div>
         <table className="w-full text-sm">
           <thead className="bg-gray-50">
@@ -121,7 +121,6 @@ export default async function DashboardPage({
 
 function TypeBadge({ type }: { type: string }) {
   const styles: Record<string, string> = {
-    facture: 'bg-blue-100 text-blue-700',
     devis: 'bg-amber-100 text-amber-700',
     commande: 'bg-green-100 text-green-700',
     avoir: 'bg-purple-100 text-purple-700',
@@ -129,6 +128,13 @@ function TypeBadge({ type }: { type: string }) {
   }
   const labels: Record<string, string> = {
     facture: 'Facture', devis: 'Devis', commande: 'Commande', avoir: 'Avoir', bl: 'BL',
+  }
+  if (type === 'facture') {
+    return (
+      <span className="inline-flex px-2 py-0.5 rounded-full text-xs font-medium" style={{ backgroundColor: '#fde8d5', color: '#E8630A' }}>
+        Facture
+      </span>
+    )
   }
   return (
     <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${styles[type] || 'bg-gray-100 text-gray-600'}`}>

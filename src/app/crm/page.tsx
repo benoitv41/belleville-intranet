@@ -20,7 +20,7 @@ export default async function CrmPage() {
   return (
     <div className="p-6 flex flex-col" style={{ height: 'calc(100vh - 0px)' }}>
       <div className="mb-4 flex-shrink-0">
-        <h1 className="text-2xl font-bold text-gray-900">CRM — Opportunités</h1>
+        <h1 className="text-2xl font-bold" style={{ color: '#1C3461' }}>CRM — Opportunités</h1>
         <p className="text-gray-500 text-sm mt-0.5">Suivi du pipeline commercial par étape</p>
       </div>
       <div className="flex-1 overflow-hidden">

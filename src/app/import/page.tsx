@@ -8,7 +8,7 @@ export default function ImportPage() {
     <div className="p-6 max-w-4xl">
       <div className="flex items-start justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 mb-1">Importer des pièces</h1>
+          <h1 className="text-2xl font-bold mb-1" style={{ color: '#1C3461' }}>Importer des pièces</h1>
           <p className="text-gray-500 text-sm">
             Importez vos factures, devis et commandes depuis un fichier Excel (.xlsx) ou CSV.
           </p>

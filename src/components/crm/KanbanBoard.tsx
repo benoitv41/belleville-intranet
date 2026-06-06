@@ -70,15 +70,16 @@ export function KanbanBoard({ initialOpportunites, commerciaux }: Props) {
             <p className="text-sm text-gray-500">{opps.filter(o => o.etape_id !== -1 && o.etape_id !== 13).length} opportunités actives</p>
           </div>
           {totalPipeline > 0 && (
-            <div className="flex items-center gap-1.5 bg-blue-50 border border-blue-100 px-3 py-1.5 rounded-lg">
-              <Euro className="w-3.5 h-3.5 text-blue-500" />
-              <span className="text-sm font-semibold text-blue-700">{formatCurrency(totalPipeline)} pipeline</span>
+            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg" style={{ backgroundColor: '#1C3461' }}>
+              <Euro className="w-3.5 h-3.5 text-white opacity-80" />
+              <span className="text-sm font-semibold text-white">{formatCurrency(totalPipeline)} pipeline</span>
             </div>
           )}
         </div>
         <button
           onClick={() => setModal({ open: true, opp: null })}
-          className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors"
+          className="flex items-center gap-2 px-4 py-2 text-white rounded-lg text-sm font-medium hover:opacity-90 transition-opacity"
+          style={{ backgroundColor: '#E8630A' }}
         >
           <Plus className="w-4 h-4" />
           Nouvelle opportunité
@@ -98,7 +99,7 @@ export function KanbanBoard({ initialOpportunites, commerciaux }: Props) {
               <div
                 key={etapeId}
                 className={`flex flex-col w-[220px] flex-shrink-0 rounded-xl border transition-colors ${
-                  isDragTarget ? 'border-blue-400 bg-blue-50/50' : `${etape.borderClass} bg-gray-50`
+                  isDragTarget ? 'border-[#E8630A]/50 bg-orange-50/50' : `${etape.borderClass} bg-gray-50`
                 }`}
                 onDragOver={e => { e.preventDefault(); setDragOverEtape(etapeId) }}
                 onDragLeave={() => setDragOverEtape(null)}
@@ -127,7 +128,7 @@ export function KanbanBoard({ initialOpportunites, commerciaux }: Props) {
                       onDragEnd={() => { setDraggingId(null); setDragOverEtape(null) }}
                       onClick={() => setModal({ open: true, opp })}
                       className={`bg-white border rounded-lg p-3 cursor-pointer hover:shadow-md transition-all group select-none ${
-                        draggingId === opp.id ? 'opacity-40 scale-95' : 'border-gray-200 hover:border-blue-200'
+                        draggingId === opp.id ? 'opacity-40 scale-95' : 'border-gray-200 hover:border-orange-200'
                       }`}
                     >
                       <div className="flex items-start justify-between gap-1 mb-1.5">
@@ -141,15 +142,15 @@ export function KanbanBoard({ initialOpportunites, commerciaux }: Props) {
                         <p className="text-xs text-gray-400 truncate">{opp.commercial_nom}</p>
                       )}
                       {opp.montant_ht != null && opp.montant_ht > 0 && (
-                        <p className="text-xs font-semibold text-blue-600 mt-1.5">{formatCurrency(opp.montant_ht)}</p>
+                        <p className="text-xs font-semibold mt-1.5" style={{ color: '#E8630A' }}>{formatCurrency(opp.montant_ht)}</p>
                       )}
                     </div>
                   ))}
 
                   {/* Drop zone hint */}
                   {isDragTarget && draggingId && (
-                    <div className={`border-2 border-dashed border-blue-300 rounded-lg h-16 flex items-center justify-center`}>
-                      <span className="text-xs text-blue-400">Déposer ici</span>
+                    <div className="border-2 border-dashed rounded-lg h-16 flex items-center justify-center" style={{ borderColor: 'rgba(232,99,10,0.5)' }}>
+                      <span className="text-xs" style={{ color: '#E8630A' }}>Déposer ici</span>
                     </div>
                   )}
                 </div>

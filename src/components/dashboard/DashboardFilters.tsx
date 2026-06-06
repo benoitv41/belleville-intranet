@@ -38,7 +38,7 @@ export function DashboardFilters({ commerciaux }: { commerciaux: string[] }) {
         <select
           value={commercial}
           onChange={e => update('commercial', e.target.value)}
-          className="text-sm border border-gray-200 rounded-lg px-3 py-1.5 pr-8 appearance-none bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-700"
+          className="text-sm border border-gray-200 rounded-lg px-3 py-1.5 pr-8 appearance-none bg-white focus:outline-none focus:ring-2 focus:ring-[#E8630A]/30 text-gray-700"
         >
           <option value="">Tous les commerciaux</option>
           {commerciaux.map(c => <option key={c} value={c}>{c}</option>)}
@@ -51,10 +51,11 @@ export function DashboardFilters({ commerciaux }: { commerciaux: string[] }) {
           <button
             key={p.value}
             onClick={() => update('periode', p.value)}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+            style={periode === p.value ? { backgroundColor: '#E8630A', color: 'white', borderColor: '#E8630A' } : {}}
+            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all border ${
               periode === p.value
-                ? 'bg-blue-600 text-white'
-                : 'bg-white border border-gray-200 text-gray-600 hover:border-blue-300 hover:text-blue-600'
+                ? 'text-white border-transparent'
+                : 'bg-white border-gray-200 text-gray-600 hover:border-gray-300'
             }`}
           >
             {p.label}

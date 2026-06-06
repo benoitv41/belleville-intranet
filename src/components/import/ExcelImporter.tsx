@@ -115,7 +115,7 @@ export function ExcelImporter() {
           )}
         </p>
         <div className="flex gap-3 justify-center">
-          <a href="/" className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors">
+          <a href="/" className="px-4 py-2 text-white rounded-lg text-sm font-medium hover:opacity-90 transition-opacity" style={{ backgroundColor: '#E8630A' }}>
             Voir le dashboard
           </a>
           <button onClick={reset} className="px-4 py-2 border border-gray-200 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors">
@@ -206,7 +206,7 @@ export function ExcelImporter() {
                     <div className="space-y-2">
                       <div className="relative">
                         <select
-                          className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 appearance-none bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 appearance-none bg-white focus:outline-none focus:ring-2 focus:ring-[#E8630A]/30"
                           value={mapping.type || ''}
                           onChange={e => setMapping(m => ({ ...m, type: e.target.value || undefined }))}
                         >
@@ -223,10 +223,11 @@ export function ExcelImporter() {
                               <button
                                 key={t}
                                 onClick={() => setDefaultType(t)}
-                                className={`px-3 py-1 rounded-full text-xs font-medium border transition-colors ${
+                                style={defaultType === t ? { backgroundColor: '#E8630A', borderColor: '#E8630A', color: 'white' } : {}}
+                                className={`px-3 py-1 rounded-full text-xs font-medium border transition-all ${
                                   defaultType === t
-                                    ? 'bg-blue-600 text-white border-blue-600'
-                                    : 'border-gray-200 text-gray-600 hover:border-blue-300'
+                                    ? ''
+                                    : 'border-gray-200 text-gray-600 hover:border-gray-300'
                                 }`}
                               >
                                 {TYPE_LABELS[t]}
@@ -239,7 +240,7 @@ export function ExcelImporter() {
                   ) : (
                     <div className="relative">
                       <select
-                        className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 appearance-none bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 appearance-none bg-white focus:outline-none focus:ring-2 focus:ring-[#E8630A]/30"
                         value={mapping[field.key] || ''}
                         onChange={e => setMapping(m => ({ ...m, [field.key]: e.target.value || undefined }))}
                       >
@@ -294,7 +295,8 @@ export function ExcelImporter() {
             <button
               onClick={handleImport}
               disabled={!canProceed || loading}
-              className="px-6 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
+              className="px-6 py-2 text-white rounded-lg text-sm font-medium hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity flex items-center gap-2"
+              style={{ backgroundColor: '#E8630A' }}
             >
               {loading && <Loader2 className="w-4 h-4 animate-spin" />}
               Importer {parsed.rows.length} lignes

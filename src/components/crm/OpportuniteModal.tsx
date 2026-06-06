@@ -84,7 +84,7 @@ export function OpportuniteModal({ opportunite, commerciaux, onClose, onSave, on
               required
               value={form.titre}
               onChange={e => setForm(f => ({ ...f, titre: e.target.value }))}
-              className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#E8630A]/30"
               placeholder="Ex: Projet Dupont — Aménagement bureau"
             />
           </div>
@@ -96,7 +96,7 @@ export function OpportuniteModal({ opportunite, commerciaux, onClose, onSave, on
                 type="text"
                 value={form.client}
                 onChange={e => setForm(f => ({ ...f, client: e.target.value }))}
-                className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#E8630A]/30"
                 placeholder="Nom du client"
               />
             </div>
@@ -106,7 +106,7 @@ export function OpportuniteModal({ opportunite, commerciaux, onClose, onSave, on
                 type="text"
                 value={form.client_numero}
                 onChange={e => setForm(f => ({ ...f, client_numero: e.target.value }))}
-                className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#E8630A]/30"
                 placeholder="00001"
               />
             </div>
@@ -118,7 +118,7 @@ export function OpportuniteModal({ opportunite, commerciaux, onClose, onSave, on
               <select
                 value={form.commercial_nom}
                 onChange={e => setForm(f => ({ ...f, commercial_nom: e.target.value }))}
-                className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#E8630A]/30 bg-white"
               >
                 <option value="">— Sélectionner</option>
                 {commerciaux.map(c => <option key={c} value={c}>{c}</option>)}
@@ -130,7 +130,7 @@ export function OpportuniteModal({ opportunite, commerciaux, onClose, onSave, on
                 type="number"
                 value={form.montant_ht}
                 onChange={e => setForm(f => ({ ...f, montant_ht: e.target.value }))}
-                className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#E8630A]/30"
                 placeholder="0"
                 min="0"
                 step="0.01"
@@ -143,7 +143,7 @@ export function OpportuniteModal({ opportunite, commerciaux, onClose, onSave, on
             <select
               value={form.etape_id}
               onChange={e => setForm(f => ({ ...f, etape_id: Number(e.target.value) }))}
-              className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+              className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#E8630A]/30 bg-white"
             >
               {CRM_ETAPES.map(e => <option key={e.id} value={e.id}>{e.label}</option>)}
             </select>
@@ -155,7 +155,7 @@ export function OpportuniteModal({ opportunite, commerciaux, onClose, onSave, on
               value={form.notes}
               onChange={e => setForm(f => ({ ...f, notes: e.target.value }))}
               rows={3}
-              className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+              className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#E8630A]/30 resize-none"
               placeholder="Informations complémentaires..."
             />
           </div>
@@ -179,7 +179,7 @@ export function OpportuniteModal({ opportunite, commerciaux, onClose, onSave, on
               <button type="button" onClick={onClose} className="px-4 py-2 border border-gray-200 rounded-lg text-sm hover:bg-gray-50 transition-colors">
                 Annuler
               </button>
-              <button type="submit" disabled={loading || !form.titre.trim()} className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700 disabled:opacity-50 transition-colors">
+              <button type="submit" disabled={loading || !form.titre.trim()} className="flex items-center gap-2 px-4 py-2 text-white rounded-lg text-sm hover:opacity-90 disabled:opacity-50 transition-opacity" style={{ backgroundColor: '#E8630A' }}>
                 {loading && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
                 {isEdit ? 'Enregistrer' : 'Créer'}
               </button>

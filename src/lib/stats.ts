@@ -159,9 +159,9 @@ export function repartitionTypes(docs: Document[]) {
   const counts = { facture: 0, devis: 0, commande: 0, avoir: 0 }
   docs.forEach(d => { if (d.type in counts) counts[d.type as keyof typeof counts]++ })
   return [
-    { name: 'Factures', value: counts.facture, color: '#3B82F6' },
+    { name: 'Factures', value: counts.facture, color: '#E8630A' },
     { name: 'Devis', value: counts.devis, color: '#F59E0B' },
-    { name: 'Commandes', value: counts.commande, color: '#10B981' },
+    { name: 'Commandes', value: counts.commande, color: '#1C3461' },
     { name: 'Avoirs', value: counts.avoir, color: '#8B5CF6' },
   ].filter(d => d.value > 0)
 }
