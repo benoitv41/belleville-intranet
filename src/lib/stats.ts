@@ -107,9 +107,8 @@ export function computeKpis(docs: Document[]): KpiData {
     .filter(d => isWithinInterval(parseISO(d.date), { start: startThisMonth, end: endThisMonth }))
     .reduce((sum, d) => sum + d.montant_ht, 0)
 
-  const commandesNonTerminees = commandesActives
-    .filter(d => d.statut === 'en_cours')
-    .reduce((sum, d) => sum + d.montant_ht, 0)
+  const totalFactures = factures.reduce((sum, d) => sum + d.montant_ht, 0)
+  const commandesNonTerminees = Math.max(0, totalCommandes - totalFactures + totalAvoirs)
 
   return {
     caTotal,

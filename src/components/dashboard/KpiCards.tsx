@@ -47,7 +47,7 @@ const CARDS = (kpis: KpiData) => [
   {
     label: 'Cmd. non terminées',
     value: formatCurrency(kpis.commandesNonTerminees),
-    sub: 'statut en cours',
+    sub: 'commandes − facturé + avoirs',
     icon: FileText,
     accent: '#DC2626',
     iconBg: '#fee2e2',
