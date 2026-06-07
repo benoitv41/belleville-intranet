@@ -1,7 +1,7 @@
 import { getDocuments } from '@/lib/data'
 import { DocumentsTable } from '@/components/documents/DocumentsTable'
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 60
 
 export default async function DocumentsPage() {
   const documents = await getDocuments()

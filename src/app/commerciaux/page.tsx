@@ -1,7 +1,7 @@
 import { getDocuments, getCommerciaux } from '@/lib/data'
 import { CommerciauxView } from '@/components/commerciaux/CommerciauxView'
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 60
 
 export default async function CommerciauxPage() {
   const [documents, commerciaux] = await Promise.all([getDocuments(), getCommerciaux()])
