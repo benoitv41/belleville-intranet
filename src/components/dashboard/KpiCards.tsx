@@ -9,6 +9,7 @@ const CARDS = (kpis: KpiData) => [
     label: 'CA Total (facturé HT)',
     value: formatCurrency(kpis.caTotal),
     sub: `${formatCurrency(kpis.caMois)} ce mois`,
+    sub2: kpis.totalAvoirs > 0 ? `dont ${formatCurrency(kpis.totalAvoirs)} d'avoirs` : undefined,
     icon: TrendingUp,
     trend: kpis.evolutionCa,
     accent: '#E8630A',
@@ -57,7 +58,7 @@ export function KpiCards({ kpis }: Props) {
   const cards = CARDS(kpis)
   return (
     <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
-      {cards.map(({ label, value, sub, icon: Icon, trend, accent, iconBg, iconColor }) => (
+      {cards.map(({ label, value, sub, sub2, icon: Icon, trend, accent, iconBg, iconColor }) => (
         <div key={label} className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
           <div style={{ height: '3px', backgroundColor: accent }} />
           <div className="p-6">
@@ -77,6 +78,9 @@ export function KpiCards({ kpis }: Props) {
               )}
               <span className="text-xs text-gray-400">{sub}</span>
             </div>
+            {sub2 && (
+              <p className="text-xs text-purple-500 mt-0.5">{sub2}</p>
+            )}
           </div>
         </div>
       ))}

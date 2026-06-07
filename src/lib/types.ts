@@ -44,6 +44,7 @@ export interface ColumnMapping {
 export interface KpiData {
   caTotal: number
   caMois: number
+  totalAvoirs: number
   nbFactures: number
   nbDevis: number
   nbCommandes: number

@@ -98,9 +98,12 @@ export function computeKpis(docs: Document[]): KpiData {
   const devisValides = devis.filter(d => d.statut === 'validé').length
   const tauxConversion = devis.length > 0 ? Math.round((devisValides / devis.length) * 100) : 0
 
+  const totalAvoirs = avoirs.reduce((sum, d) => sum + d.montant_ht, 0)
+
   return {
     caTotal,
     caMois,
+    totalAvoirs,
     nbFactures: factures.length,
     nbDevis: devis.length,
     nbCommandes: commandes.length,
