@@ -112,22 +112,24 @@ export function computeKpis(docs: Document[]): KpiData {
   }
 }
 
-export function caParCommercial(docs: Document[]): CommercialStats[] {
+export function caParCommercial(docs: Document[], rawAmount = false): CommercialStats[] {
   const map: Record<string, CommercialStats> = {}
 
   docs.forEach(doc => {
     if (!map[doc.commercial_nom]) {
       map[doc.commercial_nom] = { nom: doc.commercial_nom, ca: 0, devis: 0, commandes: 0, factures: 0, tauxConversion: 0 }
     }
-    if (doc.type === 'facture') {
+    if (rawAmount) {
       map[doc.commercial_nom].ca += doc.montant_ht
-      map[doc.commercial_nom].factures++
+    } else {
+      if (doc.type === 'facture') {
+        map[doc.commercial_nom].ca += doc.montant_ht
+        map[doc.commercial_nom].factures++
+      }
+      if (doc.type === 'avoir') map[doc.commercial_nom].ca -= doc.montant_ht
+      if (doc.type === 'devis') map[doc.commercial_nom].devis++
+      if (doc.type === 'commande') map[doc.commercial_nom].commandes++
     }
-    if (doc.type === 'avoir') {
-      map[doc.commercial_nom].ca -= doc.montant_ht
-    }
-    if (doc.type === 'devis') map[doc.commercial_nom].devis++
-    if (doc.type === 'commande') map[doc.commercial_nom].commandes++
   })
 
   return Object.values(map).map(s => ({
@@ -136,7 +138,7 @@ export function caParCommercial(docs: Document[]): CommercialStats[] {
   })).sort((a, b) => b.ca - a.ca)
 }
 
-export function caMensuel(docs: Document[], months = 12) {
+export function caMensuel(docs: Document[], months = 12, rawAmount = false) {
   const result: Record<string, number> = {}
 
   for (let i = months - 1; i >= 0; i--) {
@@ -148,14 +150,44 @@ export function caMensuel(docs: Document[], months = 12) {
   docs.forEach(doc => {
     const key = doc.date.slice(0, 7)
     if (!(key in result)) return
-    if (doc.type === 'facture') result[key] += doc.montant_ht
-    if (doc.type === 'avoir') result[key] -= doc.montant_ht
+    if (rawAmount) {
+      result[key] += doc.montant_ht
+    } else {
+      if (doc.type === 'facture') result[key] += doc.montant_ht
+      if (doc.type === 'avoir') result[key] -= doc.montant_ht
+    }
   })
 
   return Object.entries(result).map(([month, ca]) => ({
     month: format(parseISO(`${month}-01`), 'MMM yy', { locale: fr }),
     ca: Math.round(ca),
   }))
+}
+
+export function commandesComparaisonAnnuelle(docs: Document[]): ComparaisonData {
+  const now = new Date()
+  const thisYear = now.getFullYear()
+  const lastYear = thisYear - 1
+
+  const months = Array.from({ length: 12 }, (_, i) => ({
+    month: format(new Date(2000, i, 1), 'MMM', { locale: fr }),
+    annee_courante: 0,
+    annee_precedente: 0,
+  }))
+
+  docs.filter(d => d.type === 'commande' && d.statut !== 'annulé').forEach(doc => {
+    const date = parseISO(doc.date)
+    const year = date.getFullYear()
+    const idx = date.getMonth()
+    if (year === thisYear) months[idx].annee_courante += doc.montant_ht
+    if (year === lastYear) months[idx].annee_precedente += doc.montant_ht
+  })
+
+  return {
+    months: months.map(m => ({ ...m, annee_courante: Math.round(m.annee_courante), annee_precedente: Math.round(m.annee_precedente) })),
+    thisYear,
+    lastYear,
+  }
 }
 
 export function repartitionTypes(docs: Document[]) {

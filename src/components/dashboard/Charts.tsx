@@ -8,11 +8,11 @@ import {
 import { CommercialStats } from '@/lib/types'
 import { formatCurrency, ComparaisonData } from '@/lib/stats'
 
-interface CaMensuelProps { data: { month: string; ca: number }[] }
-export function CaMensuelChart({ data }: CaMensuelProps) {
+interface CaMensuelProps { data: { month: string; ca: number }[]; title?: string }
+export function CaMensuelChart({ data, title }: CaMensuelProps) {
   return (
     <div className="bg-white rounded-xl border border-gray-200 p-5 shadow-sm">
-      <h3 className="font-semibold text-sm uppercase tracking-[0.1em] mb-4" style={{ color: '#1C3461' }}>Évolution CA mensuel</h3>
+      <h3 className="font-semibold text-sm uppercase tracking-[0.1em] mb-4" style={{ color: '#1C3461' }}>{title ?? 'Évolution CA mensuel'}</h3>
       <ResponsiveContainer width="100%" height={220}>
         <LineChart data={data} margin={{ top: 4, right: 8, bottom: 0, left: 0 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
@@ -26,11 +26,11 @@ export function CaMensuelChart({ data }: CaMensuelProps) {
   )
 }
 
-interface CaCommercialProps { data: CommercialStats[]; objectifs?: Record<string, number> }
-export function CaCommercialChart({ data }: CaCommercialProps) {
+interface CaCommercialProps { data: CommercialStats[]; title?: string }
+export function CaCommercialChart({ data, title }: CaCommercialProps) {
   return (
     <div className="bg-white rounded-xl border border-gray-200 p-5 shadow-sm">
-      <h3 className="font-semibold text-sm uppercase tracking-[0.1em] mb-4" style={{ color: '#1C3461' }}>CA par commercial</h3>
+      <h3 className="font-semibold text-sm uppercase tracking-[0.1em] mb-4" style={{ color: '#1C3461' }}>{title ?? 'CA par commercial'}</h3>
       <ResponsiveContainer width="100%" height={220}>
         <BarChart data={data} margin={{ top: 4, right: 8, bottom: 0, left: 0 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
@@ -100,6 +100,26 @@ export function ComparaisonAnnuelleChart({ data }: { data: ComparaisonData }) {
           <Line type="monotone" dataKey="annee_courante" stroke="#E8630A" strokeWidth={2.5} dot={{ r: 3 }} name={String(thisYear)} />
           <Line type="monotone" dataKey="annee_precedente" stroke="#1C3461" strokeWidth={2} strokeDasharray="4 4" dot={{ r: 3 }} name={String(lastYear)} />
         </LineChart>
+      </ResponsiveContainer>
+    </div>
+  )
+}
+
+export function CommandesAnnuellesChart({ data }: { data: ComparaisonData }) {
+  const { months, thisYear, lastYear } = data
+  return (
+    <div className="bg-white rounded-xl border border-gray-200 p-5 shadow-sm">
+      <h3 className="font-semibold text-sm uppercase tracking-[0.1em] mb-4" style={{ color: '#1C3461' }}>Commandes {thisYear} vs {lastYear}</h3>
+      <ResponsiveContainer width="100%" height={220}>
+        <BarChart data={months} margin={{ top: 4, right: 8, bottom: 0, left: 0 }} barCategoryGap="30%">
+          <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+          <XAxis dataKey="month" tick={{ fontSize: 11 }} />
+          <YAxis tickFormatter={v => `${(v / 1000).toFixed(0)}k`} tick={{ fontSize: 12 }} />
+          <Tooltip formatter={(v) => formatCurrency(Number(v))} />
+          <Legend iconSize={10} />
+          <Bar dataKey="annee_courante" fill="#1C3461" radius={[3, 3, 0, 0]} name={String(thisYear)} />
+          <Bar dataKey="annee_precedente" fill="#8fa3c8" radius={[3, 3, 0, 0]} name={String(lastYear)} />
+        </BarChart>
       </ResponsiveContainer>
     </div>
   )

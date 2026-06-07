@@ -1,6 +1,6 @@
 import { Suspense } from 'react'
 import { getDocuments, getCommerciaux, isSupabaseConfigured } from '@/lib/data'
-import { computeKpis, caParCommercial, caMensuel, repartitionTypes, pipelineParCommercial, filterByPeriod, caComparaisonAnnuelle } from '@/lib/stats'
+import { computeKpis, caParCommercial, caMensuel, repartitionTypes, pipelineParCommercial, filterByPeriod, caComparaisonAnnuelle, commandesComparaisonAnnuelle } from '@/lib/stats'
 import { KpiCards } from '@/components/dashboard/KpiCards'
 import { DashboardFilters } from '@/components/dashboard/DashboardFilters'
 import {
@@ -10,16 +10,21 @@ import {
   PipelineChart,
   ConversionChart,
   ComparaisonAnnuelleChart,
+  CommandesAnnuellesChart,
 } from '@/components/dashboard/Charts'
 import { AlertCircle } from 'lucide-react'
 import Link from 'next/link'
 
 export const revalidate = 60
 
+const TYPE_LABELS: Record<string, string> = {
+  facture: 'Factures', devis: 'Devis', commande: 'Commandes', avoir: 'Avoirs', bl: 'BL',
+}
+
 export default async function DashboardPage({
   searchParams,
 }: {
-  searchParams: Promise<{ commercial?: string; periode?: string }>
+  searchParams: Promise<{ commercial?: string; periode?: string; type?: string }>
 }) {
   const params = await searchParams
   const [allDocuments, commerciaux] = await Promise.all([getDocuments(), getCommerciaux()])
@@ -34,12 +39,20 @@ export default async function DashboardPage({
   const periode = params.periode || 'tout'
   const filteredDocs = filterByPeriod(filteredByCommercial, periode)
 
+  const typeFilter = params.type || null
+  const chartDocs = typeFilter ? filteredDocs.filter(d => d.type === typeFilter) : filteredDocs
+  const rawAmount = !!typeFilter
+
   const kpis = computeKpis(filteredDocs)
-  const statsParCommercial = caParCommercial(filteredDocs)
-  const mensuel = caMensuel(filteredDocs)
+  const statsParCommercial = caParCommercial(chartDocs, rawAmount)
+  const mensuel = caMensuel(chartDocs, 12, rawAmount)
   const repartition = repartitionTypes(filteredDocs)
   const pipeline = pipelineParCommercial(filteredDocs)
   const comparaison = periode === 'comparaison' ? caComparaisonAnnuelle(filteredDocs) : null
+  const commandesComparaison = commandesComparaisonAnnuelle(filteredDocs)
+
+  const chartTitle = typeFilter ? TYPE_LABELS[typeFilter] + ' par mois' : undefined
+  const commercialChartTitle = typeFilter ? TYPE_LABELS[typeFilter] + ' par commercial' : undefined
 
   return (
     <div className="p-6 space-y-6">
@@ -64,16 +77,26 @@ export default async function DashboardPage({
         <DashboardFilters commerciaux={commerciaux.map(c => c.nom)} />
       </Suspense>
 
-      <KpiCards kpis={kpis} />
+      <KpiCards
+        kpis={kpis}
+        currentType={typeFilter}
+        currentParams={{ commercial: params.commercial, periode: params.periode }}
+      />
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        {comparaison ? (
-          <ComparaisonAnnuelleChart data={comparaison} />
-        ) : (
-          <CaMensuelChart data={mensuel} />
-        )}
-        <CaCommercialChart data={statsParCommercial} />
-      </div>
+      {comparaison ? (
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          <div className="lg:col-span-2">
+            <ComparaisonAnnuelleChart data={comparaison} />
+          </div>
+          <CaCommercialChart data={statsParCommercial} title={commercialChartTitle} />
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          <CaMensuelChart data={mensuel} title={chartTitle} />
+          <CommandesAnnuellesChart data={commandesComparaison} />
+          <CaCommercialChart data={statsParCommercial} title={commercialChartTitle} />
+        </div>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <RepartitionTypesChart data={repartition} />
@@ -102,7 +125,7 @@ export default async function DashboardPage({
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100">
-            {filteredDocs.slice(0, 8).map(doc => (
+            {chartDocs.slice(0, 8).map(doc => (
               <tr key={doc.id} className="hover:bg-gray-50 transition-colors">
                 <td className="px-5 py-3 text-gray-500 font-mono text-xs">{doc.numero || '—'}</td>
                 <td className="px-5 py-3">
