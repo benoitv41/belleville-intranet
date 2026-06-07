@@ -4,7 +4,9 @@ import { CommerciauxView } from '@/components/commerciaux/CommerciauxView'
 export const revalidate = 60
 
 export default async function CommerciauxPage() {
-  const [documents, commerciaux] = await Promise.all([getDocuments(), getCommerciaux()])
+  const [allDocuments, commerciaux] = await Promise.all([getDocuments(), getCommerciaux()])
+  const activeNames = new Set(commerciaux.map(c => c.nom))
+  const documents = allDocuments.filter(d => activeNames.has(d.commercial_nom))
 
   return (
     <div className="p-6">

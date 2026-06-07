@@ -41,7 +41,7 @@ export async function getCommerciaux(): Promise<Commercial[]> {
     return DEMO_COMMERCIAUX
   }
   const supabase = getSupabaseClient()
-  const { data } = await supabase.from('commerciaux').select('*').order('nom')
+  const { data } = await supabase.from('commerciaux').select('*').eq('actif', true).order('nom')
   return (data || []) as Commercial[]
 }
 

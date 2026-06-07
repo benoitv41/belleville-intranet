@@ -22,7 +22,10 @@ export default async function DashboardPage({
   searchParams: Promise<{ commercial?: string; periode?: string }>
 }) {
   const params = await searchParams
-  const [documents, commerciaux] = await Promise.all([getDocuments(), getCommerciaux()])
+  const [allDocuments, commerciaux] = await Promise.all([getDocuments(), getCommerciaux()])
+
+  const activeNames = new Set(commerciaux.map(c => c.nom))
+  const documents = allDocuments.filter(d => activeNames.has(d.commercial_nom))
 
   const filteredByCommercial = params.commercial
     ? documents.filter(d => d.commercial_nom === params.commercial)

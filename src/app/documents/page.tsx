@@ -1,11 +1,13 @@
-import { getDocuments } from '@/lib/data'
+import { getDocuments, getCommerciaux } from '@/lib/data'
 import { DocumentsTable } from '@/components/documents/DocumentsTable'
 
 export const revalidate = 60
 
 export default async function DocumentsPage() {
-  const documents = await getDocuments()
-  const commerciaux = [...new Set(documents.map(d => d.commercial_nom))].sort()
+  const [allDocuments, commerciauxData] = await Promise.all([getDocuments(), getCommerciaux()])
+  const activeNames = new Set(commerciauxData.map(c => c.nom))
+  const documents = allDocuments.filter(d => activeNames.has(d.commercial_nom))
+  const commerciaux = commerciauxData.map(c => c.nom)
 
   return (
     <div className="p-6">

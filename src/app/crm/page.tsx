@@ -16,6 +16,8 @@ async function getOpportunites(): Promise<Opportunite[]> {
 
 export default async function CrmPage() {
   const [opportunites, commerciaux] = await Promise.all([getOpportunites(), getCommerciaux()])
+  const activeNames = new Set(commerciaux.map(c => c.nom))
+  const filteredOpportunites = opportunites.filter(o => !o.commercial_nom || activeNames.has(o.commercial_nom))
 
   return (
     <div className="p-6 flex flex-col" style={{ height: 'calc(100vh - 0px)' }}>
@@ -29,7 +31,7 @@ export default async function CrmPage() {
       </div>
       <div className="flex-1 overflow-hidden">
         <KanbanBoard
-          initialOpportunites={opportunites}
+          initialOpportunites={filteredOpportunites}
           commerciaux={commerciaux.map(c => c.nom)}
         />
       </div>

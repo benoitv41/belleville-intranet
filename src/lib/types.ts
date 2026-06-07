@@ -23,6 +23,7 @@ export interface Commercial {
   nom: string
   email?: string
   objectif_mensuel: number
+  actif?: boolean
   created_at?: string
 }
 
