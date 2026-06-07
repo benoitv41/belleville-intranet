@@ -164,6 +164,37 @@ export function caMensuel(docs: Document[], months = 12, rawAmount = false) {
   }))
 }
 
+export function facturesCommandesMensuel(docs: Document[], months = 12) {
+  const factures: Record<string, number> = {}
+  const commandes: Record<string, number> = {}
+  const avoirs: Record<string, number> = {}
+
+  for (let i = months - 1; i >= 0; i--) {
+    const d = subMonths(new Date(), i)
+    const key = format(d, 'yyyy-MM')
+    factures[key] = 0
+    commandes[key] = 0
+    avoirs[key] = 0
+  }
+
+  docs.forEach(doc => {
+    const key = doc.date.slice(0, 7)
+    if (!(key in factures)) return
+    if (doc.type === 'facture') factures[key] += doc.montant_ht
+    if (doc.type === 'avoir') avoirs[key] += doc.montant_ht
+    if (doc.type === 'commande' && doc.statut !== 'annulé') commandes[key] += doc.montant_ht
+  })
+
+  const currentMonth = format(new Date(), 'yyyy-MM')
+
+  return Object.keys(factures).map(key => ({
+    month: format(parseISO(`${key}-01`), 'MMM yy', { locale: fr }),
+    factures: Math.round(factures[key] - avoirs[key]),
+    commandes: Math.round(commandes[key]),
+    isCurrent: key === currentMonth,
+  }))
+}
+
 export function commandesComparaisonAnnuelle(docs: Document[]): ComparaisonData {
   const now = new Date()
   const thisYear = now.getFullYear()

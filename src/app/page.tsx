@@ -1,6 +1,6 @@
 import { Suspense } from 'react'
 import { getDocuments, getCommerciaux, isSupabaseConfigured } from '@/lib/data'
-import { computeKpis, caParCommercial, caMensuel, repartitionTypes, pipelineParCommercial, filterByPeriod, caComparaisonAnnuelle, commandesComparaisonAnnuelle } from '@/lib/stats'
+import { computeKpis, caParCommercial, caMensuel, repartitionTypes, pipelineParCommercial, filterByPeriod, caComparaisonAnnuelle, commandesComparaisonAnnuelle, facturesCommandesMensuel } from '@/lib/stats'
 import { KpiCards } from '@/components/dashboard/KpiCards'
 import { DashboardFilters } from '@/components/dashboard/DashboardFilters'
 import {
@@ -11,6 +11,7 @@ import {
   ConversionChart,
   ComparaisonAnnuelleChart,
   CommandesAnnuellesChart,
+  FacturesCommandesChart,
 } from '@/components/dashboard/Charts'
 import { AlertCircle } from 'lucide-react'
 import Link from 'next/link'
@@ -50,6 +51,7 @@ export default async function DashboardPage({
   const pipeline = pipelineParCommercial(filteredDocs)
   const comparaison = periode === 'comparaison' ? caComparaisonAnnuelle(filteredDocs) : null
   const commandesComparaison = commandesComparaisonAnnuelle(filteredDocs)
+  const facturesCommandes = facturesCommandesMensuel(filteredDocs)
 
   const chartTitle = typeFilter ? TYPE_LABELS[typeFilter] + ' par mois' : undefined
   const commercialChartTitle = typeFilter ? TYPE_LABELS[typeFilter] + ' par commercial' : undefined
@@ -97,6 +99,8 @@ export default async function DashboardPage({
           <CaCommercialChart data={statsParCommercial} title={commercialChartTitle} />
         </div>
       )}
+
+      <FacturesCommandesChart data={facturesCommandes} />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <RepartitionTypesChart data={repartition} />

@@ -105,6 +105,44 @@ export function ComparaisonAnnuelleChart({ data }: { data: ComparaisonData }) {
   )
 }
 
+interface FacturesCommandesProps { data: { month: string; factures: number; commandes: number; isCurrent: boolean }[] }
+export function FacturesCommandesChart({ data }: FacturesCommandesProps) {
+  const currentMonth = data.find(d => d.isCurrent)?.month
+  return (
+    <div className="bg-white rounded-xl border border-gray-200 p-5 shadow-sm">
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="font-semibold text-sm uppercase tracking-[0.1em]" style={{ color: '#1C3461' }}>Facturations & Commandes mensuels</h3>
+        {currentMonth && (
+          <span className="text-xs px-2 py-0.5 rounded-full font-medium" style={{ backgroundColor: '#fde8d5', color: '#E8630A' }}>
+            Mois en cours : {currentMonth}
+          </span>
+        )}
+      </div>
+      <ResponsiveContainer width="100%" height={240}>
+        <LineChart data={data} margin={{ top: 4, right: 8, bottom: 0, left: 0 }}>
+          <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+          <XAxis dataKey="month" tick={{ fontSize: 11 }} />
+          <YAxis tickFormatter={v => `${(v / 1000).toFixed(0)}k`} tick={{ fontSize: 12 }} />
+          <Tooltip formatter={(v) => formatCurrency(Number(v))} />
+          <Legend iconSize={10} />
+          <Line type="monotone" dataKey="factures" stroke="#E8630A" strokeWidth={2.5} dot={(props) => {
+            const { cx, cy, payload } = props
+            return payload.isCurrent
+              ? <circle key={payload.month} cx={cx} cy={cy} r={6} fill="#E8630A" stroke="white" strokeWidth={2} />
+              : <circle key={payload.month} cx={cx} cy={cy} r={3} fill="#E8630A" />
+          }} name="Facturations HT" />
+          <Line type="monotone" dataKey="commandes" stroke="#1C3461" strokeWidth={2.5} dot={(props) => {
+            const { cx, cy, payload } = props
+            return payload.isCurrent
+              ? <circle key={payload.month} cx={cx} cy={cy} r={6} fill="#1C3461" stroke="white" strokeWidth={2} />
+              : <circle key={payload.month} cx={cx} cy={cy} r={3} fill="#1C3461" />
+          }} name="Commandes HT" />
+        </LineChart>
+      </ResponsiveContainer>
+    </div>
+  )
+}
+
 export function CommandesAnnuellesChart({ data }: { data: ComparaisonData }) {
   const { months, thisYear, lastYear } = data
   return (
