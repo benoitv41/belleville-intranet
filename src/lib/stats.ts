@@ -100,13 +100,24 @@ export function computeKpis(docs: Document[]): KpiData {
 
   const totalAvoirs = avoirs.reduce((sum, d) => sum + d.montant_ht, 0)
 
+  const commandesActives = commandes.filter(d => d.statut !== 'annulé')
+  const totalCommandes = commandesActives.reduce((sum, d) => sum + d.montant_ht, 0)
+
+  const commandesMois = commandesActives
+    .filter(d => isWithinInterval(parseISO(d.date), { start: startThisMonth, end: endThisMonth }))
+    .reduce((sum, d) => sum + d.montant_ht, 0)
+
+  const commandesNonTerminees = commandesActives
+    .filter(d => d.statut === 'en_cours')
+    .reduce((sum, d) => sum + d.montant_ht, 0)
+
   return {
     caTotal,
     caMois,
     totalAvoirs,
-    nbFactures: factures.length,
-    nbDevis: devis.length,
-    nbCommandes: commandes.length,
+    totalCommandes,
+    commandesMois,
+    commandesNonTerminees,
     tauxConversion,
     evolutionCa,
   }

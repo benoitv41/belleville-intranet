@@ -46,9 +46,9 @@ export interface KpiData {
   caTotal: number
   caMois: number
   totalAvoirs: number
-  nbFactures: number
-  nbDevis: number
-  nbCommandes: number
+  totalCommandes: number
+  commandesMois: number
+  commandesNonTerminees: number
   tauxConversion: number
   evolutionCa: number
 }
