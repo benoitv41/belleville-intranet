@@ -73,7 +73,7 @@ export function computeKpis(docs: Document[]): KpiData {
   const startLastMonth = startOfMonth(subMonths(now, 1))
   const endLastMonth = endOfMonth(subMonths(now, 1))
 
-  const factures = docs.filter(d => d.type === 'facture' && d.statut !== 'annulé')
+  const factures = docs.filter(d => d.type === 'facture')
   const avoirs = docs.filter(d => d.type === 'avoir')
   const devis = docs.filter(d => d.type === 'devis')
   const commandes = docs.filter(d => d.type === 'commande')
@@ -119,7 +119,7 @@ export function caParCommercial(docs: Document[]): CommercialStats[] {
     if (!map[doc.commercial_nom]) {
       map[doc.commercial_nom] = { nom: doc.commercial_nom, ca: 0, devis: 0, commandes: 0, factures: 0, tauxConversion: 0 }
     }
-    if (doc.type === 'facture' && doc.statut !== 'annulé') {
+    if (doc.type === 'facture') {
       map[doc.commercial_nom].ca += doc.montant_ht
       map[doc.commercial_nom].factures++
     }
@@ -148,7 +148,7 @@ export function caMensuel(docs: Document[], months = 12) {
   docs.forEach(doc => {
     const key = doc.date.slice(0, 7)
     if (!(key in result)) return
-    if (doc.type === 'facture' && doc.statut !== 'annulé') result[key] += doc.montant_ht
+    if (doc.type === 'facture') result[key] += doc.montant_ht
     if (doc.type === 'avoir') result[key] -= doc.montant_ht
   })
 
